@@ -6,5 +6,7 @@ Created on Wed Apr 19 13:52:40 2017
 @author: mario
 """
 
-import FSMainOptimYpakaraiLakeTSPGAWithAlgaeImprovementRate
+import FSMainOptimYpakaraiLakeTSPGAWithAlgaeImprovementRate as OptimGA
+
+OptimGA.main()
 
