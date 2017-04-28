@@ -16,6 +16,12 @@ from deap import base, tools
 
 toolbox=base.Toolbox()
 
+### Registro de Funciones de Modulo DEAP######################################
+toolbox.register("select1", tools.selRoulette) 
+toolbox.register("select2", tools.selBest)
+toolbox.register("mate", tools.cxOrdered)
+toolbox.register("mutate", tools.mutShuffleIndexes, indpb=0.05)
+
 
 def pop_valid_creation(cand_pop):
     '''Crea una poblacion valida a partir de un conjunto de balizas '''
@@ -60,14 +66,14 @@ def initIndividual(icls, content):
     "Inicializacion de clase de Individuo (Externo a DEAP)"
     return icls(content)
 
-def initPopulation(pcls, ind_init, filename):
+def initPopulation(pcls, ind_init,pop_valid):
     "Inicializacion de Poblacion"
     return pcls(ind_init(c) for c in pop_valid)   
 
             
 def create_tour(individual):
     "Relaciona el indice de la baliza con las coordenadas"
-    answer = [list(cities)[e] for e in individual] # Parea el indice del 
+    answer = [list(param.cities)[e] for e in individual] # Parea el indice del 
     #   individuo en individual con las coordenadas en cities
 #    print(e, answer)
 #    print  'Cities', answer,
@@ -106,7 +112,7 @@ def evaluation(individual):
             individual, param.intersec_routes, param.arr_subgroup)
    
 #==============================================================================
-##                       Death Penalty + Penalty Factor - km2
+##                     1-  Death Penalty + Penalty Factor - km2
 #==============================================================================
 
     if param.FIT_FUNC_TYPE == 1:        
@@ -120,7 +126,7 @@ def evaluation(individual):
 
  
 #==============================================================================
-#                       Penalty Factor - coverage %
+#                      2- Penalty Factor - coverage %
 #==============================================================================
 
     elif param.FIT_FUNC_TYPE == 2:
@@ -130,7 +136,7 @@ def evaluation(individual):
                                    tot_intersec_count)*100/param.LAKE_SIZE,)        
 
 #==============================================================================
-##                     Exponential Penalty Factor - coverage %
+##                     3- Exponential Penalty Factor - coverage %
 #==============================================================================
     elif param.FIT_FUNC_TYPE == 3:    
         answer2 = (np.exp(-tot_intersec_count/8)*(
@@ -140,7 +146,7 @@ def evaluation(individual):
 
 
 #==============================================================================
-##                       Penalty Factor - size km2       
+##                      4- Penalty Factor - size km2       
 #==============================================================================
     elif param.FIT_FUNC_TYPE == 4:
         answer2 = ((1-float(tot_intersec_count)/(param.N_BEACON-1))*(
@@ -150,14 +156,14 @@ def evaluation(individual):
     
     
 #==============================================================================
-# #                           Penalty Factor - ROI        
+# #                     5-Penalty Factor - ROI        
 #==============================================================================
     elif param.FIT_FUNC_TYPE == 5:
         answer2 =((1-float(tot_intersec_count)/(len(individual)-1))*
                   ROI_algae_sampled,)
 
 #==============================================================================
-# #                           Death Penalty - ROI        
+# #                    6-  Death Penalty - ROI        
 #==============================================================================
     elif param.FIT_FUNC_TYPE == 6:
         if tot_intersec_count > 0:
@@ -173,7 +179,7 @@ def evaluation(individual):
 
 
 def genetic_algorithm(pop):
-    
+    "Implementacion del GA en una poblacion dada (pop)"
     list_max = [] # lista de maximas de las generaciones de esta simulacion
     list_ave = [] # lista de promedio de las generaciones de esta simulacion
     list_imp_rate = [] # lista de mejora del fitness percentual a traves de las
@@ -193,7 +199,9 @@ def genetic_algorithm(pop):
 #            print fit
         ind.fitness.values = fit
     
-    # Inicio de Evolucion
+#==============================================================================
+#     # Inicio de Evolucion
+#==============================================================================
     for g in range(param.NGEN):
         
         gen_best=[]
@@ -276,7 +284,7 @@ def genetic_algorithm(pop):
     best_ind = tools.selBest(pop, 1)[0]
     worst_ind = tools.selWorst(pop,1)[0]
     
-    print evaluation(best_ind), max(fits)
+##    print evaluation(best_ind), max(fits)
     
     last_pop = pop
     
@@ -308,3 +316,26 @@ def genetic_algorithm(pop):
 #    Se retornan indicadores del GA
     return (best_ind , max(fits), worst_ind, list_max, list_ave, 
             list_imp_rate, valid_gen, last_pop) #, pop, list_max
+
+#####Registro de la funcion evaluate luego de definir la funcion evaluation            
+toolbox.register("evaluate",evaluation)
+
+#==============================================================================
+# def subgroup_selection():
+#     "Seleccion sub-conjunto de balizas alrededor de mancha de algas"
+#     arr_alg_coord= np.loadtxt('arr_alg_coord_size_event_tracking3.csv' ,
+#                               dtype = 'uint8', delimiter =',')
+#     max_north_coord = np.max(arr_alg_coord)[0]
+#     min_north_coord = np.mix(arr_alg_coord)[0]
+#     
+#     
+#     for element in arr_alg_coord:
+#         
+#         if abs(element[0]-prev_element[0])>1:
+#==============================================================================
+            
+        
+    
+    
+    
+    

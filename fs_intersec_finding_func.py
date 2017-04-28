@@ -62,14 +62,16 @@ def find_between_points(pt,p1,p2):
 
 def find_intersec(origen1,destino1,origen2,destino2):
 
-    O1_x = float(origen1[0])
-    O1_y = float(origen1[1])
-    D1_x = float(destino1[0])
-    D1_y = float(destino1[1])
-    O2_x = float(origen2[0])
-    O2_y = float(origen2[1])
-    D2_x = float(destino2[0])
-    D2_y = float(destino2[1])
+#==============================================================================
+#     O1_x = float(origen1[0])
+#     O1_y = float(origen1[1])
+#     D1_x = float(destino1[0])
+#     D1_y = float(destino1[1])
+#     O2_x = float(origen2[0])
+#     O2_y = float(origen2[1])
+#     D2_x = float(destino2[0])
+#     D2_y = float(destino2[1])
+#==============================================================================
 
     orientation1 = orientation2 = orientation3 = orientation4 = 0
     intersection1 = intersection2 = intersection3 = intersection4 = 0
@@ -182,3 +184,40 @@ def check_intersection(ruta, center):
 ##check_intersection(ruta_test,centro_test)
 
 ##print arr_centers_coord[59][69]
+
+def intersec_count_f(indiv, intersec_routes, arr_subgroup):
+    "Cuenta la cantidad de intersecciones de un individuo."
+    
+    short_indiv = [] # lista parcial de indiv
+    last_route = 0   # ultima ruta en short_indiv
+    intersec_count = 0 # contador de intersecciones de rutas en individuo
+
+    for idx, element in enumerate(indiv):   # Creacion de nueva lista
+        short_indiv = arr_subgroup[indiv[:idx+1]]         # Agrega gradualmente los elementos del individuo y
+                                            # chequea la cantidad de interseccioens hasta ese punto
+        
+        if len(short_indiv)>2: # Solo evalua si la lista tiene mas de 2 elementos
+            last_route = param.N_BEACON*short_indiv[-2] + short_indiv[-1] 
+            test_route = 0 # Ruta para verificar interseccion
+            
+            for idx2, element3 in enumerate(short_indiv): # Seleccion de baliza
+                if idx2 < len(short_indiv)-2: # Todas las rutas excepto la ultima
+                    test_route = param.N_BEACON*short_indiv[idx2] + short_indiv[
+                            idx2+1]
+                    intersec_count += int(intersec_routes[
+                            last_route][test_route])
+            
+    return intersec_count
+
+def invalid_route_count(indiv, allowed_routes, arr_subgroup):
+    "Cuenta la cantidad de rutas invalidas de un individuo."
+
+    n_ruta_inval = 0 # contador de rutas invalidas en individuo
+
+    for idx, ind in enumerate(indiv): # verificacion en matriz de rutas validas
+        if idx != (len(indiv)-1):
+            if int(allowed_routes[arr_subgroup[indiv[idx]]][arr_subgroup[indiv[
+                    idx+1]]]) == 1:
+                n_ruta_inval += 1
+
+    return n_ruta_inval

@@ -1,7 +1,8 @@
 
-INPUT1 = 'allowed_routes_positive.csv'
-INPUT2 = 'ListaCoordenadasConvRefMetros.csv'
-INPUT3 = 'arr_alg_pattern_size_event_tracking3.csv'
+INPUT1 = 'allowed_routes_positive.csv' # indica rutas validas
+INPUT2 = 'ListaCoordenadasConvRefMetros.csv' # indica coordenadas balizas
+INPUT3 = 'arr_alg_pattern_size_event_tracking3.csv' # indica cuadros con mancha en grilla
+
 
 OUTPUT1 = 'sampled_grid_event_tracking3.csv'
 
