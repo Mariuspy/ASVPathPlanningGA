@@ -59,7 +59,6 @@ STRATEGY_PHASE = 1 #NO CAMBIAR HASTA ENCONTRAR FUNCION DE SUB_GRUPO
 #==============================================================================
 # # CONSTANTES
 #==============================================================================
-
 arr_sampled_grid_pattern = np.loadtxt(INPUT2, dtype = 'uint8', 
                                       delimiter =',')
 
@@ -155,4 +154,4 @@ cities = list_coord2 # 1- coordenadas de la ciudad en el TSP, se utiliza para
 #    create_tour y graficar
 #    cities = list_coord_subgroup # 2- subgrupo de balizas
 
-print 'len cities', len(cities)
+#print 'len cities', len(cities)

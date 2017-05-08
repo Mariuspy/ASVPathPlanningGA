@@ -1,3 +1,4 @@
+
 import parameters_opt_ga as param
 import numpy as np
 
@@ -187,7 +188,7 @@ def check_intersection(ruta, center):
 
 def intersec_count_f(indiv, intersec_routes, arr_subgroup):
     "Cuenta la cantidad de intersecciones de un individuo."
-    
+
     short_indiv = [] # lista parcial de indiv
     last_route = 0   # ultima ruta en short_indiv
     intersec_count = 0 # contador de intersecciones de rutas en individuo
@@ -195,7 +196,7 @@ def intersec_count_f(indiv, intersec_routes, arr_subgroup):
     for idx, element in enumerate(indiv):   # Creacion de nueva lista
         short_indiv = arr_subgroup[indiv[:idx+1]]         # Agrega gradualmente los elementos del individuo y
                                             # chequea la cantidad de interseccioens hasta ese punto
-        
+
         if len(short_indiv)>2: # Solo evalua si la lista tiene mas de 2 elementos
             last_route = param.N_BEACON*short_indiv[-2] + short_indiv[-1] 
             test_route = 0 # Ruta para verificar interseccion
@@ -219,5 +220,5 @@ def invalid_route_count(indiv, allowed_routes, arr_subgroup):
             if int(allowed_routes[arr_subgroup[indiv[idx]]][arr_subgroup[indiv[
                     idx+1]]]) == 1:
                 n_ruta_inval += 1
-
+                
     return n_ruta_inval

@@ -16,9 +16,9 @@
 
 ##############Inicializacion ########################################
 
-import matplotlib
+#import matplotlib
 
-matplotlib.use('Agg') # Desmarcar para
+#matplotlib.use('Agg')  # Descomentar esto para guardar grafico en archivo externo
 
 #import matplotlib.pyplot as plt
 #==============================================================================
@@ -211,7 +211,7 @@ def main():
         pop = toolbox.population_guess() # Creacion de poblacion valida
     
     #    pop = toolbox.population(param.POPU) # Creacion de poblacion aleatoria
-        print 'len_pop', len(pop)    
+         
         ###########################################################################
     
         ###########################################################################
@@ -233,7 +233,9 @@ def main():
         for element in best_individual:
             best_ind_final.append(param.arr_subgroup[element])    
         
-        print best_individual
+#        print best_individual
+#        print fs_intersec_finding_func.invalid_route_count(
+#            best_individual, param.arr_allowed_routes, param.arr_subgroup)
         arr_imp_rate = np.array(lst_imp_rate)
         arr_max = np.array(lst_max)
         
@@ -259,10 +261,10 @@ def main():
         print 'Simulation', sim
         print best_ind_final
     #    print 'Fitness = ',round((evaluation(best_individual)[0]),3)
-        print 'Fitness = ', evaluation2
+        print 'Fitness = ', round(evaluation2,3)
         print 'Rutas invalidas = ', fs_intersec_finding_func.invalid_route_count(
                 best_individual,param.arr_allowed_routes,param.arr_subgroup)
-        print '1ra Generacion con ruta valida = ', valid_gen2
+    #    print '1ra Generacion con ruta valida = ', valid_gen2
     #    tot_best_ind.append(evaluation(best_individual)[0])
         tot_best_ind.append(evaluation2)    
     
@@ -286,10 +288,10 @@ def main():
     #########Impresion de resultados#####################################################
     
     print 'BEST OF SIMULATIONS'
-    print best_of_best, len(best_of_best)
+    print best_of_best
     print 'Best fitness =', round(best_evaluation,3)
     
-    print '\n\n'
+    print '\n'
     
     
     #np.savetxt(param.OUTPUT1, best_of_best, fmt = '%i', delimiter=",")

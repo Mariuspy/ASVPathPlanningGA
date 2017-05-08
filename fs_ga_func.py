@@ -25,10 +25,13 @@ toolbox.register("mutate", tools.mutShuffleIndexes, indpb=0.05)
 
 def pop_valid_creation(cand_pop):
     '''Crea una poblacion valida a partir de un conjunto de balizas '''
+    
+    print "Creacion de poblacion valida"    
+    
     numb_iter = 0 # contador de intentos para hallar poblacion
     numb_solu = 0 # contador de soluciones encontradas
     indiv_len = len(cand_pop)
-    print indiv_len
+    print "Longitud de invididuos = ", indiv_len
     
     total_possi_solu = [] # lista de poblacion inicial valida
 
@@ -59,7 +62,9 @@ def pop_valid_creation(cand_pop):
     
         numb_iter += 1
     
-    print numb_iter
+    print "Intentos  aleatorios de creacion de poblacion =", numb_iter
+    print "Tamano de Poblacion =", len(total_possi_solu)
+    print "\n"
     return total_possi_solu
     
 def initIndividual(icls, content):
@@ -108,8 +113,8 @@ def evaluation(individual):
 #####################Calculo de intersecciones#############################
 
     tot_intersec_count = 0 # contador de intersecciones en individuos
-    tot_intersec_count = fs_intersec_finding_func.intersec_count_f(
-            individual, param.intersec_routes, param.arr_subgroup)
+    tot_intersec_count = fs_intersec_finding_func.invalid_route_count(
+            individual, param.arr_allowed_routes, param.arr_subgroup)
    
 #==============================================================================
 ##                     1-  Death Penalty + Penalty Factor - km2
@@ -133,7 +138,7 @@ def evaluation(individual):
         answer2 = ((1-float(tot_intersec_count)/(len(individual)-1))*(
                        param.FRANJA*fs_cities_dist_func.total_distance(
                                create_tour(individual))-(param.FRANJA**2)*
-                                   tot_intersec_count)*100/param.LAKE_SIZE,)        
+                                   float(tot_intersec_count))*100/param.LAKE_SIZE,)        
 
 #==============================================================================
 ##                     3- Exponential Penalty Factor - coverage %
@@ -180,6 +185,9 @@ def evaluation(individual):
 
 def genetic_algorithm(pop):
     "Implementacion del GA en una poblacion dada (pop)"
+    
+    print "Start of the Genetic Algorithm"
+    
     list_max = [] # lista de maximas de las generaciones de esta simulacion
     list_ave = [] # lista de promedio de las generaciones de esta simulacion
     list_imp_rate = [] # lista de mejora del fitness percentual a traves de las
@@ -275,7 +283,7 @@ def genetic_algorithm(pop):
              if valid_solu_flag_in == 1:
                  valid_solu_flag_out = 1
                  valid_gen = g 
-                 print "valid gen", valid_gen
+#                 print "valid gen", valid_gen
                  
 
                       
