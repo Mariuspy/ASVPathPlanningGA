@@ -12,19 +12,24 @@ import csv
 # # PARAMETROS
 #==============================================================================
 
-#INPUT1 = 'arr_alg_pattern_size5.csv'
-INPUT2 = 'sampled_grid_event_tracking.csv'
-INPUT3 = 'combination.csv'
-INPUT4 = 'ListaCoordenadasConvRefMetros3.csv'
-INPUT5 = 'intersection_routes.csv'
-INPUT6 = 'best_last_pop.csv'
-#INPUT7 = 'sampled_grid_event_tracking2.csv'
+#INPUT1 = 'arr_alg_pattern_size5.csv' # Not used in GA
+INPUT2 = 'sampled_grid_event_tracking.csv' # used in evaluation function (fs_ga_func.py)
+INPUT3 = 'Constants/combination.csv' # used in pop_valid_creation, evaluation 
+                                    # and invalid_route_count functions 
+                                    # (fs_ga_func.py and fs_MainOptim....py)
+INPUT4 = 'Constants/ListaCoordenadasConvRefMetros3.csv' # used in create_tour 
+                                                        # (fs_ga_func.py)
+INPUT5 = 'Constants/intersection_routes.csv'# used in intersec_count_f function 
+                                            #(fs_intersec_finding_func.py)
+INPUT6 = 'best_last_pop.csv'#
+#INPUT7 = 'sampled_grid_event_tracking2.csv' # Not used in GA
+INPUT8 = 'Constants/in_lake.csv'
 
-OUTPUT1 = 'best_indiv_test_ngen100_sim1.csv'
-OUTPUT2 = 'improve_rate_ngen100_sim1.csv'
-OUTPUT3 = 'ImproveRate_Solution_ngen100_sim1.png'
-OUTPUT4 = 'Best_Solution_ngen100_sim1.csv'
-OUTPUT5 = 'best_last_pop2.csv'
+OUTPUT1 = 'Results/best_indiv_test_ngen100_sim1.csv'
+OUTPUT2 = 'Results/improve_rate_ngen100_sim1.csv'
+OUTPUT3 = 'Results/ImproveRate_Solution_ngen100_sim1.png'
+OUTPUT4 = 'Results/Best_Solution_ngen100_sim1.csv'
+OUTPUT5 = 'Results/best_last_pop2.csv'
 
 N_BEACON = 60 
 N_SIM = 3
@@ -46,7 +51,9 @@ GRID_X_DIV = LAKE_SIZE_X/GRID_SIZE # numero de cuadros sobre el eje x
 GRID_Y_DIV = LAKE_SIZE_Y/GRID_SIZE # numero de cuadros sobre el eje y
 
 FIT_FUNC_TYPE = 2
-STRATEGY_PHASE = 1 #NO CAMBIAR HASTA ENCONTRAR FUNCION DE SUB_GRUPO
+STRATEGY_PHASE = 1 #NO CAMBIAR HASTA ENCONTRAR FUNCION PARA SELECCION DE 
+                   # SUB_GRUPO DE BALIZAS PARA FASE DE INTENSFICACION
+
 '''
 1 - Death Penalty + Penalty Factor - km2
 2 - Penalty Factor - coverage %
@@ -79,6 +86,15 @@ else:
 
 ###############################################################################
 
+
+
+#==============================================================================
+# ###################Importar rutas validas################################
+#  Importa archivo combination.csv
+#  combination.csv = Matriz 60 x 60
+#  Indica si una ruta es valida desde una baliza a otra (fila a columna)
+#==============================================================================
+
 arr_allowed_routes = np.loadtxt(INPUT3,dtype = 'uint8',delimiter =',' )
 
 ###############################################################################
@@ -94,7 +110,19 @@ arr_centers = np.array(lst_centers)
 arr_centers_coord = GRID_SIZE*arr_centers+GRID_SIZE/2
 
 
-###############################################################################
+#==============================================================================
+# ###################Importar matriz de intersecciones#########################
+#   Importa archivo intersection_routes.csv
+#   intersection_routes.csv = Matriz 3,600 x 3,600
+#   Las lineas y columnas representan las rutas
+#   x= N_BEACONS*Baliza_origen1 + Baliza_destino1
+#   y= N_BEACONS*Baliza_origen2 + Baliza_destino2
+#   La interseccion en la matriz indica si hay interseccion o no entre las 
+#   rutas (0 o 1)
+#   Ej.: Ruta 1 = b1b2, Ruta 2 = b3b4
+#   Verificar en x = 1*60 + 2 = 62 e y = 3*60 + 4 = 184 
+#==============================================================================
+
 
 ifile  = open(INPUT5, "rb") #
 reader = csv.reader(ifile)
@@ -155,3 +183,16 @@ cities = list_coord2 # 1- coordenadas de la ciudad en el TSP, se utiliza para
 #    cities = list_coord_subgroup # 2- subgrupo de balizas
 
 #print 'len cities', len(cities)
+
+arr_inlake_square = np.loadtxt(INPUT8,dtype ='uint8', delimiter =',')
+
+lst_centers = []
+for x in range(GRID_X_DIV):
+    sublst_centers = []
+    for y in range(GRID_Y_DIV):
+        sublst_centers.append([x, y])
+    lst_centers.append(sublst_centers)
+
+arr_centers = np.array(lst_centers)
+
+arr_centers_coord = GRID_SIZE*arr_centers+GRID_SIZE/2
