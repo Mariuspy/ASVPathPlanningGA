@@ -8,6 +8,7 @@ Created on Wed Apr 19 14:29:00 2017
 import parameters_opt_ga as param
 import random
 import numpy as np
+import numpy.ma as ma
 
 import fs_intersec_finding_func
 import fs_cities_dist_func
@@ -22,6 +23,49 @@ toolbox.register("select2", tools.selBest)
 toolbox.register("mate", tools.cxOrdered)
 toolbox.register("mutate", tools.mutShuffleIndexes, indpb=0.05)
 
+
+
+def check_all_intersection(ruta_test,bal_ori,bal_dest):
+    "Calcula intersecciones de todas las rutas con cuadros de grilla"
+    
+    intersec_check = 0
+    arr_sampled_grid = np.zeros((param.GRID_X_DIV,param.GRID_Y_DIV))
+    
+    for x in range(param.GRID_X_DIV):
+        for y in range(param.GRID_Y_DIV):
+            if param.arr_alg_pattern[x][y] and param.arr_inlake_square[x][y]:
+#                print x,y
+                centro_test = param.arr_centers_coord[x][y]
+#                print ruta_test, centro_test
+                intersec_check = fs_intersec_finding_func.check_intersection(    
+                        ruta_test,centro_test)
+##                if intersec_check == 2 and arr_sampled_grid_pattern[
+##                    bal_ori][bal_dest]<1:
+                if intersec_check == 2:    
+#                    print x,y
+                    arr_sampled_grid[x][y]+=1
+    
+    return arr_sampled_grid
+
+def coefficient_variation(individual):
+    "Calcula el coeficiente de variacion de las zonas muestreadas"
+    coef_var = 0
+    
+    for idx,elements in enumerate(individual):
+        if idx < len(individual)-1:
+    #        print individual[idx], individual[idx+1]
+            ruta_test = [list_coord[individual[idx]],list_coord[individual[
+                    idx+1]]]
+    #        print ruta_test
+            check_all_intersection(ruta_test, individual[idx3], individual[
+                    idx3+1])
+
+    
+    mdata = ma.masked_less(samp_grid,1)
+    
+    coef_var = np.std(mdata)/np.mean(mdata)
+    
+    return coef_var
 
 def pop_valid_creation(cand_pop):
     '''Crea una poblacion valida a partir de un conjunto de balizas '''
@@ -85,25 +129,26 @@ def create_tour(individual):
 #    print  'e', e, '\n' 
     return answer
 
-##########################Funcion Objetivo#################################
+##########################Funcion Objetivo#####################################
 
 def evaluation(individual):
     "Selecciona y calcula la Funcion Objetivo de un individuo"
 #        print individual
 
-###########################Region de Interes###############################    
-
-    ROI_algae_sampled = 0
-
-    for idx,indiv in enumerate(individual):
-        if idx < len(individual)-1:
-##                print individual[idx], individual[idx+1]
-##                print "===="
-#                print arr_sampled_grid_pattern[idx][idx+1]
-            ROI_algae_sampled = ROI_algae_sampled + (
-                    param.arr_sampled_grid_pattern[param.arr_subgroup[
-                            individual[idx]]][param.arr_subgroup[individual[
-                                    idx+1]]])
+###########################Region de Interes###################################    
+    if param.FIT_FUNC_TYPE == 5 or param.FIT_FUNC_TYPE == 6
+    
+        ROI_algae_sampled = 0
+    
+        for idx,indiv in enumerate(individual):
+            if idx < len(individual)-1:
+    ##                print individual[idx], individual[idx+1]
+    ##                print "===="
+    #                print arr_sampled_grid_pattern[idx][idx+1]
+                ROI_algae_sampled = ROI_algae_sampled + (
+                        param.arr_sampled_grid_pattern[param.arr_subgroup[
+                                individual[idx]]][param.arr_subgroup[individual[
+                                        idx+1]]])
 
 ##        print ROI_algae_sampled
 
@@ -175,6 +220,15 @@ def evaluation(individual):
             answer2 = (-1,)
         else:
             answer2 =(ROI_algae_sampled,)
+    
+#==============================================================================
+#                     7-  Death Penalty - ROI variation        
+#==============================================================================  
+      elif param.FIT_FUNC_TYPE == 7:
+        if tot_intersec_count > 0:
+            answer2 = (-1,)
+        else:
+            answer2 =(coefficient_variation(individual),)  
     
     else:
         print 'FIT_FUNC_TYPE ERROR!'
