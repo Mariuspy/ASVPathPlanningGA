@@ -14,14 +14,13 @@
 #==============================================================================
 """
 
-##############Inicializacion ########################################
-
-#import matplotlib
-
-#matplotlib.use('Agg')  # Descomentar esto para guardar grafico en archivo externo
-
-#import matplotlib.pyplot as plt
 #==============================================================================
+# ############## Graph modules ################################################
+# import matplotlib
+# 
+# #matplotlib.use('Agg')  # Descomentar esto para guardar grafico en archivo externo
+# 
+# import matplotlib.pyplot as plt
 # import matplotlib.colors as colors
 # import matplotlib.cm as cmx
 #==============================================================================
@@ -32,11 +31,9 @@ import time
 # import itertools
 import numpy as np
 # import math
-
 #import csv
-
-
 #import inspect 
+
 import os
 
 from deap import base, creator, tools
@@ -54,13 +51,9 @@ def main():
     
     random.seed(time.time()) # genera semilla aleatoria
     
-    
-    
-    ### 1- Define los parametros de simulacion##################################
-    ###################Variables de Simulacion#################################
-    
-    ### 2-Imprime los parametros de simulacion
-    #######################Impresion de Parametros##################################
+    #==========================================================================
+    ########################Impresion de Parametros#######################
+    #==========================================================================
     print 'PARAMETROS'
     
     print 'Tamano del lago (LAKE_SIZE) = ' , param.LAKE_SIZE
@@ -95,53 +88,10 @@ def main():
     print '======================================================================='
     
     
-    #==============================================================================
-    #### Importacion de datos de algas
-    # arr_alg_pattern = np.loadtxt(param.INPUT1 ,dtype = 'uint8', delimiter =',')
-    # arr_sampled_grid = np.zeros((param.GRID_X_DIV,param.GRID_Y_DIV))
-    #==============================================================================
-    
-    
-    
-    #
-    
-    ############################Creacion de cuadros de grilla#######################
-    ################################################################################
-    
-    
-    
-    
-    ### 3- Importa las coordenadas de las balizas
-    
-    
-    ### 4- Importa las intersecciones entre rutas
-    #==============================================================================
-    # ###################Importar matriz de intersecciones#########################
-    #   Importa archivo intersection_routes.csv
-    #   intersection_routes.csv = Matriz 3,600 x 3,600
-    #   Las lineas y columnas representan las rutas
-    #   x= N_BEACONS*Baliza_origen1 + Baliza_destino1
-    #   y= N_BEACONS*Baliza_origen2 + Baliza_destino2
-    #   La interseccion en la matriz indica si hay interseccion o no entre las 
-    #   rutas (0 o 1)
-    #   Ej.: Ruta 1 = b1b2, Ruta 2 = b3b4
-    #   Verificar en x = 1*60 + 2 = 62 e y = 3*60 + 4 = 184 
-    #==============================================================================
-    
-    
-    
-    
-    ### 5- Importa las rutas validas
-    ###################Importar rutas validas################################
-        ### Importa archivo combination.csv
-        ### combination.csv = Matriz 60 x 60
-        ### Indica si una ruta es valida desde una baliza a otra (fila a columna)
-    
-    
-    ### 6- Inicia las simulaciones múltiples
-    ###############################################################################    
-    ###########Simulaciones multiples##############################################
-    ###############################################################################
+    #==========================================================================
+    #     ### Inicio de simulaciones múltiples
+    #==========================================================================
+
     
     best_lst_imp_rate = []
     best_lst_max = [] # Lista de los mejores fitness de todas las generaciones
@@ -156,16 +106,16 @@ def main():
     
         valid_gen2 = 0    
     
-    ### 7- Genera una población inicial valida
-    ###############################################################################
-    ###############Generacion de poblacion inicial optima##########################
-    ###############################################################################
+    #==========================================================================
+    #     ### Genera una población inicial valida
+    #==========================================================================
+
       
         pop_valid = fs_ga_func.pop_valid_creation(param.arr_subgroup)
         
     
-    #==============================================================================
-    #####################Importacion de poblacion externa##########################
+    #==========================================================================
+    #####################Importacion de poblacion externa######################
     #     
     #     arr_pop_valid = np.loadtxt(param.INPUT6, dtype = 'uint8', 
     #                                      delimiter =',')
@@ -175,19 +125,15 @@ def main():
     #     
     # #    print pop_valid, 'This'
     # 
-    #==============================================================================
-    ### 8- Inicia el algoritmo genético
-        ###########################################################################
-        ###################Genetic Algorithm#######################################
-        ###########################################################################
-    
-    
-    #    print 'len cities', len(cities)
+    #==========================================================================
+
         
         toolbox = base.Toolbox()
     
-    ### 9- Inicia las funciones del GA
-        ################Individual Representation And Evaluation###################
+    #==========================================================================
+    #     ### Inicializacion de las funciones del GA del modulo DEAP
+    #==========================================================================
+    ################Individual Representation And Evaluation###################
     
         creator.create("FitnessMin", base.Fitness, weights=(1.0,))
         creator.create("Individual", list, fitness=creator.FitnessMin)
@@ -200,7 +146,7 @@ def main():
     
     
     
-        ################Poblacion inicial pre-definida#############################
+    ################Poblacion inicial pre-definida#############################
     
         toolbox.register("individual_guess", fs_ga_func.initIndividual, 
                          creator.Individual)
@@ -211,23 +157,12 @@ def main():
         pop = toolbox.population_guess() # Creacion de poblacion valida
     
     #    pop = toolbox.population(param.POPU) # Creacion de poblacion aleatoria
-         
-        ###########################################################################
-    
-        ###########################################################################
-    
-        
-    
-        ####toolbox.register("select", tools.selTournament, tournsize=3) #original version
-    
-    
-    
-        ###############Codigo Dani#################################################
-    ### 10- Inicia la evolución hasta completar el numero de generaciones establecido.
-              
+
+    ################ Llamado a la funcion GA###################################
         (best_individual, evaluation2, worst_individual, lst_max, lst_ave, 
              lst_imp_rate, valid_gen2, last_pop_ga) = fs_ga_func.genetic_algorithm(
                      pop)
+        
         
         best_ind_final = [] # conversion de balizas de GA a balizas reales
         for element in best_individual:

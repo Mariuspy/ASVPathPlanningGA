@@ -23,7 +23,7 @@ Laboratory of Distributed Systems - Faculty of Engineering - National University
 **To execute type the following command: **.
 
 ```
-python fs_MAinOptimYpakaraiLakeTSPGAWithAlgaeImprovementRate3.py
+python fs_MainOptimYpakaraiLakeTSPGAWithAlgaeImprovementRate3.py
 ```
 
 #### 1- Introduction
