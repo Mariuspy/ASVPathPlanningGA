@@ -5,6 +5,8 @@ Created on Wed Apr 19 14:29:00 2017
 
 @author: mario
 """
+import time
+
 import parameters_opt_ga as param
 import random
 import numpy as np
@@ -23,17 +25,44 @@ toolbox.register("select2", tools.selBest)
 toolbox.register("mate", tools.cxOrdered)
 toolbox.register("mutate", tools.mutShuffleIndexes, indpb=0.05)
 
+def check_squares(ruta_test,x,y):
+    "Verifica si los cuadros x,y estan en el rango de accion de ruta_test"
+    x_min = x_max = y_min = y_max = 0 # limit of the search space
+    check_sq_flag = 0
+    
+    if ruta_test[0][0] < ruta_test[1][0]:
+        x_min = ruta_test[0][0]
+        x_max = ruta_test[1][0]
+    else:
+        x_min = ruta_test[1][0]
+        x_max = ruta_test[0][0]
+        
+    if ruta_test[0][1] < ruta_test[1][1]:
+        y_min = ruta_test[0][1]
+        y_max = ruta_test[1][1]
+    else:
+        y_min = ruta_test[1][1]
+        y_max = ruta_test[0][1]
+    
+    if (param.arr_centers_coord[x][y][0] >= x_min - param.GRID_SIZE and param.arr_centers_coord[x][y][0] <= x_max + param.GRID_SIZE) and \
+        (param.arr_centers_coord[x][y][1]  >= y_min - param.GRID_SIZE and param.arr_centers_coord[x][y][1]-param.GRID_SIZE <= y_max + param.GRID_SIZE):
+            check_sq_flag = 1
+    
+#    print 'x_min, max, y_min, y_max', x_min, x_max, y_min, y_max, check_sq_flag, x, y, arr_centers_coord[x][y][0], arr_centers_coord[x][y][1]
+     
+    return check_sq_flag
 
 
-def check_all_intersection(ruta_test,bal_ori,bal_dest):
+def check_all_intersection(ruta_test,bal_ori,bal_dest, arr_sampled_grid):
     "Calcula intersecciones de todas las rutas con cuadros de grilla"
     
     intersec_check = 0
-    arr_sampled_grid = np.zeros((param.GRID_X_DIV,param.GRID_Y_DIV))
+
     
     for x in range(param.GRID_X_DIV):
         for y in range(param.GRID_Y_DIV):
-            if param.arr_alg_pattern[x][y] and param.arr_inlake_square[x][y]:
+            if param.arr_alg_pattern[x][y] and param.arr_inlake_square[x][y] and \
+                check_squares(ruta_test,x,y):
 #                print x,y
                 centro_test = param.arr_centers_coord[x][y]
 #                print ruta_test, centro_test
@@ -50,20 +79,27 @@ def check_all_intersection(ruta_test,bal_ori,bal_dest):
 def coefficient_variation(individual):
     "Calcula el coeficiente de variacion de las zonas muestreadas"
     coef_var = 0
+    samp_grid = []
+    
+#    print(individual)
+    arr_sampled_grid = np.zeros((param.GRID_X_DIV,param.GRID_Y_DIV))
     
     for idx,elements in enumerate(individual):
         if idx < len(individual)-1:
     #        print individual[idx], individual[idx+1]
-            ruta_test = [list_coord[individual[idx]],list_coord[individual[
+            ruta_test = [param.list_coord[individual[idx]],param.list_coord[individual[
                     idx+1]]]
     #        print ruta_test
-            check_all_intersection(ruta_test, individual[idx3], individual[
-                    idx3+1])
+            samp_grid = check_all_intersection(ruta_test, individual[idx], individual[
+                    idx+1],arr_sampled_grid)
 
+     
     
     mdata = ma.masked_less(samp_grid,1)
     
     coef_var = np.std(mdata)/np.mean(mdata)
+    
+#    print np.sum(samp_grid), round(coef_var,3), round(np.std(mdata),3), round(np.mean(mdata),3)
     
     return coef_var
 
@@ -136,7 +172,7 @@ def evaluation(individual):
 #        print individual
 
 ###########################Region de Interes###################################    
-    if param.FIT_FUNC_TYPE == 5 or param.FIT_FUNC_TYPE == 6
+    if param.FIT_FUNC_TYPE == 5 or param.FIT_FUNC_TYPE == 6:
     
         ROI_algae_sampled = 0
     
@@ -162,21 +198,21 @@ def evaluation(individual):
             individual, param.arr_allowed_routes, param.arr_subgroup)
    
 #==============================================================================
-##                     1-  Death Penalty + Penalty Factor - km2
+##                     1-  Death Penalty + Penalty Factor -- km2
 #==============================================================================
 
     if param.FIT_FUNC_TYPE == 1:        
         if tot_intersec_count > 0:
             answer2 = (-1,)
         else:
-            answer2 = ((1-float(tot_intersec_count)/(param.N_BEACON-1))*(
+            answer2 = ((1-float(tot_intersec_count)/(len(individual)-1))*(
                           param.FRANJA*fs_cities_dist_func.total_distance(
                                   create_tour(individual))-(param.FRANJA**2)*
                                       tot_intersec_count)*100/param.LAKE_SIZE,)
 
  
 #==============================================================================
-#                      2- Penalty Factor - coverage %
+#                      2- Penalty Factor -- coverage %
 #==============================================================================
 
     elif param.FIT_FUNC_TYPE == 2:
@@ -186,7 +222,7 @@ def evaluation(individual):
                                    float(tot_intersec_count))*100/param.LAKE_SIZE,)        
 
 #==============================================================================
-##                     3- Exponential Penalty Factor - coverage %
+##                     3- Exponential Penalty Factor -- coverage %
 #==============================================================================
     elif param.FIT_FUNC_TYPE == 3:    
         answer2 = (np.exp(-tot_intersec_count/8)*(
@@ -196,24 +232,24 @@ def evaluation(individual):
 
 
 #==============================================================================
-##                      4- Penalty Factor - size km2       
+##                      4- Penalty Factor -- size km2       
 #==============================================================================
     elif param.FIT_FUNC_TYPE == 4:
-        answer2 = ((1-float(tot_intersec_count)/(param.N_BEACON-1))*(
+        answer2 = ((1-float(tot_intersec_count)/(len(individual)-1))*(
                   param.FRANJA*fs_cities_dist_func.total_distance(create_tour(
                           individual))-(param.FRANJA**2)*tot_intersec_count),)        
    
     
     
 #==============================================================================
-# #                     5-Penalty Factor - ROI        
+# #                     5-Penalty Factor -- ROI        
 #==============================================================================
     elif param.FIT_FUNC_TYPE == 5:
         answer2 =((1-float(tot_intersec_count)/(len(individual)-1))*
                   ROI_algae_sampled,)
 
 #==============================================================================
-# #                    6-  Death Penalty - ROI        
+# #                    6-  Death Penalty -- ROI        
 #==============================================================================
     elif param.FIT_FUNC_TYPE == 6:
         if tot_intersec_count > 0:
@@ -222,13 +258,19 @@ def evaluation(individual):
             answer2 =(ROI_algae_sampled,)
     
 #==============================================================================
-#                     7-  Death Penalty - ROI variation        
+#                     7-  Death Penalty -- ROI variation        
 #==============================================================================  
-      elif param.FIT_FUNC_TYPE == 7:
+    elif param.FIT_FUNC_TYPE == 7:
         if tot_intersec_count > 0:
             answer2 = (-1,)
         else:
             answer2 =(coefficient_variation(individual),)  
+#==============================================================================
+#                     8- Penalty Factor -- ROI variation        
+#==============================================================================  
+    elif param.FIT_FUNC_TYPE == 8:
+        answer2 =((1-float(tot_intersec_count)/(len(
+                individual)-1))*coefficient_variation(individual),)  
     
     else:
         print 'FIT_FUNC_TYPE ERROR!'
@@ -265,7 +307,7 @@ def genetic_algorithm(pop):
 #     # Inicio de Evolucion
 #==============================================================================
     for g in range(param.NGEN):
-        
+        print 'Generation=', g, time.ctime()
         gen_best=[]
         
         # Seleccion de inviduos para la proxima generacion
@@ -321,6 +363,8 @@ def genetic_algorithm(pop):
         list_imp_rate.append(improv_rate)
         prev_best_fitness = max(fits)
         gen_best = tools.selBest(pop,1)[0]
+        
+        print 'Gen_best=', gen_best, max(fits)
 
                  
  ## Se verifica si el mejor individuo de la generacion es valido
@@ -350,6 +394,7 @@ def genetic_algorithm(pop):
     
     last_pop = pop
     
+    print best_ind
 
 #==============================================================================
 #     ## Se verifica si el mejor individuo de la generacion es valido

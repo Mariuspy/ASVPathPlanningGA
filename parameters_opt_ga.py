@@ -12,7 +12,7 @@ import csv
 # # PARAMETROS
 #==============================================================================
 
-#INPUT1 = 'arr_alg_pattern_size5.csv' # Not used in GA
+INPUT1 = 'arr_alg_pattern_size_event_tracking3.csv' #
 INPUT2 = 'sampled_grid_event_tracking.csv' # used in evaluation function (fs_ga_func.py)
 INPUT3 = 'Constants/combination.csv' # used in pop_valid_creation, evaluation 
                                     # and invalid_route_count functions 
@@ -29,15 +29,15 @@ OUTPUT1 = 'Results/best_indiv_test_ngen100_sim1.csv'
 OUTPUT2 = 'Results/improve_rate_ngen100_sim1.csv'
 OUTPUT3 = 'Results/ImproveRate_Solution_ngen100_sim1.png'
 OUTPUT4 = 'Results/Best_Solution_ngen100_sim1.csv'
-OUTPUT5 = 'Results/best_last_pop2.csv'
+OUTPUT5 = 'Results/best_last_pop_test.csv'
 
 N_BEACON = 60 
-N_SIM = 3
+N_SIM = 1
 CXPB = 0.8
 MUTPB =  0.2
 NGEN = 10
 POPU = 100
-ELIT_RATE = 0.2 
+ELIT_RATE = 0.05 
 FRANJA = 20
 ATT_FACTOR = 1000 # Intentos para encontrar siguiente baliza en poblacion inicial valida
 ATT_POPU = 10000 # Intentos para encontrar una poblacion inicial validad  de POPU individuos
@@ -50,7 +50,7 @@ GRID_SIZE = 200 # metros
 GRID_X_DIV = LAKE_SIZE_X/GRID_SIZE # numero de cuadros sobre el eje x
 GRID_Y_DIV = LAKE_SIZE_Y/GRID_SIZE # numero de cuadros sobre el eje y
 
-FIT_FUNC_TYPE = 2
+FIT_FUNC_TYPE = 7
 STRATEGY_PHASE = 1 #NO CAMBIAR HASTA ENCONTRAR FUNCION PARA SELECCION DE 
                    # SUB_GRUPO DE BALIZAS PARA FASE DE INTENSFICACION
 
@@ -196,3 +196,5 @@ for x in range(GRID_X_DIV):
 arr_centers = np.array(lst_centers)
 
 arr_centers_coord = GRID_SIZE*arr_centers+GRID_SIZE/2
+
+arr_alg_pattern = np.loadtxt(INPUT1,dtype ='uint8', delimiter =',')

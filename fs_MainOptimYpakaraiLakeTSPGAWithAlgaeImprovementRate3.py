@@ -112,6 +112,8 @@ def main():
 
       
         pop_valid = fs_ga_func.pop_valid_creation(param.arr_subgroup)
+        np.savetxt('Results/initial_pop_test.csv', pop_valid, fmt = '%i', delimiter=",")
+        
         
     
     #==========================================================================
@@ -176,6 +178,10 @@ def main():
         
         
     #==============================================================================
+    #########Almacenamiento de la tasa de mejoras de la simulacion en archivo
+    ######### externo
+    ###########################################################################
+    #
     #     if os.path.isfile(param.OUTPUT2):
     #         with open(param.OUTPUT2,'a') as f_handle:
     #             np.savetxt(f_handle, arr_imp_rate[None,:],fmt = '%.3f', delimiter = ',')
@@ -203,7 +209,8 @@ def main():
     #    tot_best_ind.append(evaluation(best_individual)[0])
         tot_best_ind.append(evaluation2)    
     
-    ### 12- Si se llega al numero de simulaciones establecido, se elige la mejor simulacion. Caso contrario vuelve al punto 5.
+    
+    
     #########Eleccion de la simulacion con el mejor resultado#################################
         if evaluation2 > best_evaluation:
     #    if evaluation(best_individual)[0] > best_evaluation:
@@ -220,7 +227,7 @@ def main():
         
     
     ### 13- Imprime los resultados de la mejor simulación.
-    #########Impresion de resultados#####################################################
+    #########Impresion de resultados###########################################
     
     print 'BEST OF SIMULATIONS'
     print best_of_best
@@ -231,7 +238,7 @@ def main():
     
     #np.savetxt(param.OUTPUT1, best_of_best, fmt = '%i', delimiter=",")
     
-    #np.savetxt(param.OUTPUT5, best_last_pop, fmt = '%i', delimiter=",")
+    np.savetxt(param.OUTPUT5, best_last_pop, fmt = '%i', delimiter=",")
     
     arr_tot_best_ind = np.array(tot_best_ind) 
     
@@ -259,24 +266,25 @@ def main():
     # ###de fitness en archivos externos.
     # ###Lo uso cuando corro multiples simulaciones en servidor y lo
     # ###grafico en mi maquina.
-    # ##
-    # ##file = open("lst_max_ga_restrict41.txt","w")
-    # ##file.write(time.ctime())
-    # ##file.write('\n')
-    # ##file.write(os.path.basename(__file__))
-    # ##file.write('\n')
-    # ##for element in best_lst_max:
-    # ##    file.write(str(element)+',')
-    # ##file.close()
-    # ####
-    # ##file = open("lst_ave_ga_restrict41.txt","w")
-    # ##file.write(time.ctime())
-    # ##file.write('\n')
-    # ##file.write(os.path.basename(__file__))
-    # ##file.write('\n')
-    # ##for element in best_lst_ave:
-    # ##    file.write(str(element)+',')
-    # ##file.close()
+    # #########################################################################
+    #
+    # file = open("lst_max_ga_restrict41.txt","w")
+    # file.write(time.ctime())
+    # file.write('\n')
+    # file.write(os.path.basename(__file__))
+    # file.write('\n')
+    # for element in best_lst_max:
+    #     file.write(str(element)+',')
+    # file.close()
+    #
+    # file = open("lst_ave_ga_restrict41.txt","w")
+    # file.write(time.ctime())
+    # file.write('\n')
+    # file.write(os.path.basename(__file__))
+    # file.write('\n')
+    # for element in best_lst_ave:
+    #     file.write(str(element)+',')
+    # file.close()
     #==============================================================================
     
     print 'Distance = ', round(fs_cities_dist_func.total_distance(
