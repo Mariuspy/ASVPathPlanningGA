@@ -65,6 +65,5 @@ _Files_:
 - _fs_MAinOptimYpakaraiLakeTSPGAWithAlgaeImprovementRate3.py_ :Main program of the Genetic Algoritm
 - _fs_ga_func.py_: Module containing GA functions
 - _parameters_opt_ga.py_: Module containing parameters of the simulation.
-- 
 - _combination.csv_ : Matrix N_BEACONS x N_BEACONS, indicating the valid routes between origin and destination beacon. "0" means is a valid route.
-- _alllowed_routes_positive.csv_ (inverse of combination.csv): Matrix N_BEACONS x N_BEACONS, indicating the valid routes between origin and destination beacon. "1" means is a valid route.
+- _alllowed_routes_positive.csv_ (inverse of combination.csv): Matrix N_BEACONS x N_BEACONS, indicating the valid routes between origin and destination beacon. "1" means is a valid route.te.
