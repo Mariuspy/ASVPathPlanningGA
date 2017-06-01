@@ -50,17 +50,19 @@ GRID_SIZE = 200 # metros
 GRID_X_DIV = LAKE_SIZE_X/GRID_SIZE # numero de cuadros sobre el eje x
 GRID_Y_DIV = LAKE_SIZE_Y/GRID_SIZE # numero de cuadros sobre el eje y
 
-FIT_FUNC_TYPE = 7
+FIT_FUNC_TYPE = 2
 STRATEGY_PHASE = 1 #NO CAMBIAR HASTA ENCONTRAR FUNCION PARA SELECCION DE 
                    # SUB_GRUPO DE BALIZAS PARA FASE DE INTENSFICACION
 
 '''
-1 - Death Penalty + Penalty Factor - km2
-2 - Penalty Factor - coverage %
-3 - Exponential Penalty Factor - coverage %
-4 - Penalty Factor - size km2
-5 - Penalty Factor - ROI
-6-  Death Penalty
+1 - Death Penalty + Penalty Factor -- km2
+2 - Penalty Factor -- coverage %
+3 - Exponential Penalty Factor -- coverage %
+4 - Penalty Factor -- size km2
+5 - Penalty Factor -- ROI
+6 -  Death Penalty
+7 -  Death Penalty -- ROI variation
+8 - Penalty Factor -- ROI variation   
 '''
 
 #==============================================================================

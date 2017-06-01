@@ -167,12 +167,13 @@ def create_tour(individual):
 
 ##########################Funcion Objetivo#####################################
 
-def evaluation(individual):
+def evaluation(individual, fit_func_eval):
     "Selecciona y calcula la Funcion Objetivo de un individuo"
 #        print individual
+    
 
 ###########################Region de Interes###################################    
-    if param.FIT_FUNC_TYPE == 5 or param.FIT_FUNC_TYPE == 6:
+    if fit_func_eval == 5 or fit_func_eval == 6:
     
         ROI_algae_sampled = 0
     
@@ -201,7 +202,7 @@ def evaluation(individual):
 ##                     1-  Death Penalty + Penalty Factor -- km2
 #==============================================================================
 
-    if param.FIT_FUNC_TYPE == 1:        
+    if fit_func_eval == 1:        
         if tot_intersec_count > 0:
             answer2 = (-1,)
         else:
@@ -215,7 +216,7 @@ def evaluation(individual):
 #                      2- Penalty Factor -- coverage %
 #==============================================================================
 
-    elif param.FIT_FUNC_TYPE == 2:
+    elif fit_func_eval == 2:
         answer2 = ((1-float(tot_intersec_count)/(len(individual)-1))*(
                        param.FRANJA*fs_cities_dist_func.total_distance(
                                create_tour(individual))-(param.FRANJA**2)*
@@ -224,7 +225,7 @@ def evaluation(individual):
 #==============================================================================
 ##                     3- Exponential Penalty Factor -- coverage %
 #==============================================================================
-    elif param.FIT_FUNC_TYPE == 3:    
+    elif fit_func_eval == 3:    
         answer2 = (np.exp(-tot_intersec_count/8)*(
                        param.FRANJA*fs_cities_dist_func.total_distance(
                                create_tour(individual))-(param.FRANJA**2)*
@@ -234,7 +235,7 @@ def evaluation(individual):
 #==============================================================================
 ##                      4- Penalty Factor -- size km2       
 #==============================================================================
-    elif param.FIT_FUNC_TYPE == 4:
+    elif fit_func_eval == 4:
         answer2 = ((1-float(tot_intersec_count)/(len(individual)-1))*(
                   param.FRANJA*fs_cities_dist_func.total_distance(create_tour(
                           individual))-(param.FRANJA**2)*tot_intersec_count),)        
@@ -244,14 +245,14 @@ def evaluation(individual):
 #==============================================================================
 # #                     5-Penalty Factor -- ROI        
 #==============================================================================
-    elif param.FIT_FUNC_TYPE == 5:
+    elif fit_func_eval == 5:
         answer2 =((1-float(tot_intersec_count)/(len(individual)-1))*
                   ROI_algae_sampled,)
 
 #==============================================================================
 # #                    6-  Death Penalty -- ROI        
 #==============================================================================
-    elif param.FIT_FUNC_TYPE == 6:
+    elif fit_func_eval == 6:
         if tot_intersec_count > 0:
             answer2 = (-1,)
         else:
@@ -260,7 +261,7 @@ def evaluation(individual):
 #==============================================================================
 #                     7-  Death Penalty -- ROI variation        
 #==============================================================================  
-    elif param.FIT_FUNC_TYPE == 7:
+    elif fit_func_eval == 7:
         if tot_intersec_count > 0:
             answer2 = (-1,)
         else:
@@ -283,6 +284,7 @@ def genetic_algorithm(pop):
     "Implementacion del GA en una poblacion dada (pop)"
     
     print "Start of the Genetic Algorithm"
+    print "\n"
     
     list_max = [] # lista de maximas de las generaciones de esta simulacion
     list_ave = [] # lista de promedio de las generaciones de esta simulacion
@@ -307,7 +309,7 @@ def genetic_algorithm(pop):
 #     # Inicio de Evolucion
 #==============================================================================
     for g in range(param.NGEN):
-        print 'Generation=', g, time.ctime()
+#        print 'Generation=', g, time.ctime()
         gen_best=[]
         
         # Seleccion de inviduos para la proxima generacion
@@ -364,7 +366,7 @@ def genetic_algorithm(pop):
         prev_best_fitness = max(fits)
         gen_best = tools.selBest(pop,1)[0]
         
-        print 'Gen_best=', gen_best, max(fits)
+#        print 'Gen_best=', gen_best, max(fits)
 
                  
  ## Se verifica si el mejor individuo de la generacion es valido
@@ -394,7 +396,7 @@ def genetic_algorithm(pop):
     
     last_pop = pop
     
-    print best_ind
+#    print best_ind
 
 #==============================================================================
 #     ## Se verifica si el mejor individuo de la generacion es valido
@@ -425,7 +427,9 @@ def genetic_algorithm(pop):
             list_imp_rate, valid_gen, last_pop) #, pop, list_max
 
 #####Registro de la funcion evaluate luego de definir la funcion evaluation            
-toolbox.register("evaluate",evaluation)
+
+def assign_fit_func(fit_func):
+    toolbox.register("evaluate",evaluation, fit_func_eval=fit_func)
 
 #==============================================================================
 # def subgroup_selection():
