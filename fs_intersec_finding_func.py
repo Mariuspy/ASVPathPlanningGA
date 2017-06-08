@@ -34,21 +34,21 @@ def find_between_points(pt,p1,p2):
 
     if (x2>x1):
         if (y2>y1):        
-            if  ((x1<xt<x2) and (y1<yt<y2)):
+            if  ((x1<=xt<=x2) and (y1<=yt<=y2)):
                 inside = 1
 
         else:
-            if  ((x1<xt<x2) and (y1>yt>y2)):
+            if  ((x1<=xt<=x2) and (y1>=yt>=y2)):
                 inside = 1
 
     else:
         if (y2>y1):
-            if  ((x2<xt<x1) and (y1<yt<y2)):
+            if  ((x2<=xt<=x1) and (y1<=yt<=y2)):
 
                 inside = 1
 ##                print "this3"
         else:
-            if  ((x1>xt>x2) and (y2<yt<y1)):
+            if  ((x1>=xt>=x2) and (y2<=yt<=y1)):
                 inside = 1
 ##                print "this4"
 
@@ -193,6 +193,7 @@ def intersec_count_f(indiv, intersec_routes, arr_subgroup):
     last_route = 0   # ultima ruta en short_indiv
     intersec_count = 0 # contador de intersecciones de rutas en individuo
 
+    
     for idx, element in enumerate(indiv):   # Creacion de nueva lista
         short_indiv = arr_subgroup[indiv[:idx+1]]         # Agrega gradualmente los elementos del individuo y
                                             # chequea la cantidad de interseccioens hasta ese punto
