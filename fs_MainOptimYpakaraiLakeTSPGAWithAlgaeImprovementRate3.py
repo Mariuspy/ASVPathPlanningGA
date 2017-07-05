@@ -1,4 +1,4 @@
-# # -*- coding: utf-8 -*-p
+ # -*- coding: utf-8 -*-p
 """
 #==============================================================================
 #  Fecha de Creacion: 19/04/2016
@@ -43,14 +43,8 @@ import fs_intersec_finding_func
 import fs_cities_dist_func
 import fs_ga_func
 
-def main():
-    
-    print time.ctime() # Para registrar duracion de simulacion
-    print 'File name = ' , os.path.basename(__file__) # Para registrar nombre de 
-                                                      # script
-    
-    random.seed(time.time()) # genera semilla aleatoria
-    
+def print_parameters():
+
     #==========================================================================
     ########################Impresion de Parametros#######################
     #==========================================================================
@@ -67,12 +61,13 @@ def main():
     print 'Franja de Sensor (FRANJA) = ', param.FRANJA
     print 'Factor de Intentos para individuo (ATT_FACTOR)= ', param.ATT_FACTOR
     print 'Factor de Intentos para poblacion (ATT_POPU) = ', param.ATT_POPU
+    print param.FIT_FUNC_TYPE
     
     print('\n')
     
     print 'INPUT/OUTPUT'
     
-    print 'arr_sampled_grid_pattern =', param.INPUT2 
+#    print 'arr_sampled_grid_pattern =', param.INPUT2 
     print 'arr_allowed_routes =', param.INPUT3
     print 'list_coord =', param.INPUT4 
     print 'intersec_routes =', param.INPUT5 
@@ -86,16 +81,31 @@ def main():
     print 'best_last_pop =', param.OUTPUT5  
     
     print '======================================================================='
+
+def main(fit_func_type, arr_subgroup,arr_routes_AB_est_intersec,
+         dict_routes_AB_est_intersec):
     
+    print 'Start GA', time.ctime() # Para registrar duracion de simulacion
+    print 'File name = ' , os.path.basename(__file__) # Para registrar nombre de 
+                                                      # script
+    
+    random.seed(time.time()) # genera semilla aleatoria
+    
+
+    
+    fs_ga_func.assign_eval_parameters(fit_func_type, arr_routes_AB_est_intersec, 
+                                      arr_subgroup,dict_routes_AB_est_intersec)
     
     #==========================================================================
     #     ### Inicio de simulaciones múltiples
     #==========================================================================
 
     
-    best_lst_imp_rate = []
-    best_lst_max = [] # Lista de los mejores fitness de todas las generaciones
-    best_lst_ave = [] # Lista de los fitness promedio de todas las generaciones
+#==============================================================================
+#     best_lst_imp_rate = []
+#     best_lst_max = [] # Lista de los mejores fitness de todas las generaciones
+#     best_lst_ave = [] # Lista de los fitness promedio de todas las generaciones
+#==============================================================================
     tot_best_ind = [] # Lista de los mejores individuos de todas las generaciones
     best_of_best = [] # Mejor individuo de todas las simulaciones
     best_evaluation = 0 # Fitness del mejor individuo
@@ -110,9 +120,10 @@ def main():
     #     ### Genera una población inicial valida
     #==========================================================================
 
-      
-        pop_valid = fs_ga_func.pop_valid_creation(param.arr_subgroup)
-        np.savetxt('Results/initial_pop_test.csv', pop_valid, fmt = '%i', delimiter=",")
+        
+        pop_valid = fs_ga_func.pop_valid_creation(arr_subgroup)
+        np.savetxt('Results/initial_pop_test.csv', pop_valid, fmt = '%i', 
+                   delimiter=",")
         
         
     
@@ -140,7 +151,7 @@ def main():
         creator.create("FitnessMin", base.Fitness, weights=(1.0,))
         creator.create("Individual", list, fitness=creator.FitnessMin)
     
-        toolbox.register("indices", np.random.permutation, len(param.arr_subgroup))
+        toolbox.register("indices", np.random.permutation, len(arr_subgroup))
         toolbox.register(
                          "individual", tools.initIterate, creator.Individual, 
                              toolbox.indices)
@@ -168,13 +179,15 @@ def main():
         
         best_ind_final = [] # conversion de balizas de GA a balizas reales
         for element in best_individual:
-            best_ind_final.append(param.arr_subgroup[element])    
+            best_ind_final.append(arr_subgroup[element])    
         
 #        print best_individual
 #        print fs_intersec_finding_func.invalid_route_count(
-#            best_individual, param.arr_allowed_routes, param.arr_subgroup)
-        arr_imp_rate = np.array(lst_imp_rate)
-        arr_max = np.array(lst_max)
+#            best_individual, param.arr_allowed_routes, arr_subgroup)
+#==============================================================================
+#         arr_imp_rate = np.array(lst_imp_rate)
+#         arr_max = np.array(lst_max)
+#==============================================================================
         
         
     #==============================================================================
@@ -204,7 +217,7 @@ def main():
     #    print 'Fitness = ',round((evaluation(best_individual)[0]),3)
         print 'Fitness = ', round(evaluation2,3)
         print 'Rutas invalidas = ', fs_intersec_finding_func.invalid_route_count(
-                best_individual,param.arr_allowed_routes,param.arr_subgroup)
+                best_individual,param.arr_allowed_routes,arr_subgroup)
     #    print '1ra Generacion con ruta valida = ', valid_gen2
     #    tot_best_ind.append(evaluation(best_individual)[0])
         tot_best_ind.append(evaluation2)    
@@ -218,9 +231,11 @@ def main():
             best_evaluation = evaluation2
             best_of_best = best_ind_final
             best_of_best_order = best_individual
-            best_lst_max = lst_max
-            best_lst_ave = lst_ave
-            best_lst_imp_rate = lst_imp_rate
+#==============================================================================
+#             best_lst_max = lst_max
+#             best_lst_ave = lst_ave
+#             best_lst_imp_rate = lst_imp_rate
+#==============================================================================
             best_sim = sim
             best_last_pop = last_pop_ga
         print('\n')
@@ -250,10 +265,26 @@ def main():
                            best_of_best[idx+1]]) == 1:
                        best_n_rutas_inval += 1
     
+    
     print 'Rutas Invalidas = ', (best_n_rutas_inval,
                                  fs_intersec_finding_func.invalid_route_count(
-                                         best_of_best_order,param.arr_allowed_routes, 
-                                         param.arr_subgroup))
+                                         best_of_best_order,
+                                         param.arr_allowed_routes, arr_subgroup))
+#==============================================================================
+#     ROI_count = 0
+# 
+#     for idx,indiv in enumerate(best_of_best_order):
+#             if idx < len(best_of_best)-1:
+#     ##                print individual[idx], individual[idx+1]
+#     ##                print "===="
+#     #                print arr_sampled_grid_pattern[idx][idx+1]
+#                 ROI_count = ROI_count + (
+#                         arr_routes_AB_est_intersec[best_of_best[idx]][best_of_best[
+#                                         idx+1]])
+#     
+#     
+#     print 'ROI', ROI_count
+#==============================================================================
     
     print 'Average = ', round(np.average(arr_tot_best_ind),3)
     
@@ -288,9 +319,13 @@ def main():
     #==============================================================================
     
     print 'Distance = ', round(fs_cities_dist_func.total_distance(
-            fs_ga_func.create_tour(best_of_best_order)))
+            fs_ga_func.create_tour(best_of_best)))
+
+    
+#    print best_of_best_order, arr_subgroup
+    
     print 'Intersections = ' , fs_intersec_finding_func.intersec_count_f(
-            best_of_best_order, param.intersec_routes, param.arr_subgroup) 
+            best_of_best_order, param.intersec_routes, arr_subgroup) 
     
     
     #==============================================================================
@@ -315,7 +350,8 @@ def main():
     #==============================================================================
     
     print "C'est Fini"
-    print time.ctime()
+    print 'End GA',time.ctime()
+    print '\n'
     
     #==============================================================================
     # ##### 14- Grafica los resultados de la mejor simulación
@@ -351,7 +387,9 @@ def main():
     # ##plt.grid(b=True, which='both', color='0.65',linestyle='-')
     # ##plt.show()
     #==============================================================================
-
+    
+    return best_of_best
+    
 
 if __name__ == '__main__':
     main()
