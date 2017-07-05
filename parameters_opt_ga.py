@@ -206,6 +206,6 @@ arr_centers = np.array(lst_centers)
 
 arr_centers_coord = GRID_SIZE*arr_centers+GRID_SIZE/2
 
-arr_alg_pattern = np.loadtxt(INPUT1,dtype ='uint8', delimiter =',')
+#arr_alg_pattern = np.loadtxt(INPUT1,dtype ='uint8', delimiter =',')
 
 arr_inlake_center = np.loadtxt(INPUT9,dtype ='uint8', delimiter =',')
