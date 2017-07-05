@@ -1,11 +1,11 @@
-#!/usr/bin/env python2
+    #!/usr/bin/env python2
 # -*- coding: utf-8 -*-
 """
 Created on Wed Apr 19 14:29:00 2017
 
 @author: mario
 """
-import time
+#import time
 
 import parameters_opt_ga as param
 import random
@@ -167,25 +167,89 @@ def create_tour(individual):
 
 ##########################Funcion Objetivo#####################################
 
-def evaluation(individual, fit_func_eval):
+def ROI_distribution(indiv_ROI,arr_beacons_ROI, 
+                    dict_routes_ROI):
+    
+    arr_sampled_grid = np.zeros((param.GRID_X_DIV,param.GRID_Y_DIV), dtype=np.int)    
+
+    for idx,indiv_element in enumerate(indiv_ROI):
+        if idx < len(indiv_ROI)-1:
+##            print indiv_ROI[idx], indiv_ROI[idx+1]
+##                print "===="
+#                print arr_sampled_grid_pattern[idx][idx+1]
+            if str(arr_beacons_ROI[indiv_ROI[idx]])+'_'+str(arr_beacons_ROI[
+                    indiv_ROI[idx+1]]) in dict_routes_ROI:
+##                print idx, idx+1
+                for route_element in dict_routes_ROI[str(arr_beacons_ROI[
+                        indiv_ROI[idx]])+'_'+str(arr_beacons_ROI[
+                                indiv_ROI[idx+1]])]:
+                    arr_sampled_grid[route_element[0]][route_element[1]]+=1
+    
+#    print 'np.sum', np.sum(arr_sampled_grid)            
+    
+    mdata = ma.masked_less(arr_sampled_grid,1)
+    
+    print 'np.mean', np.mean(mdata), 'np.std', np.std(mdata)
+    
+    if np.std(mdata) != 0:
+        inv_coef_var = np.mean(mdata)/np.std(mdata)
+    else:
+        inv_coef_var = 0
+        
+    print np.sum(arr_sampled_grid), np.sum(mdata) 
+    print round(inv_coef_var,3), round(np.std(mdata),3), round(np.mean(mdata),3)
+    
+    return inv_coef_var
+
+
+##########################Funcion Objetivo#####################################
+
+def ROI_calculation(indiv_ROI, arr_routes_AB_est_intersec_ROI,arr_beacons_ROI):
+    
+    ROI_calc = 0
+    
+    for idx,indiv_element in enumerate(indiv_ROI):
+        if idx < len(indiv_ROI)-1:
+##                print individual[idx], individual[idx+1]
+##                print "===="
+#                print arr_sampled_grid_pattern[idx][idx+1]
+            ROI_calc = ROI_calc + (
+                arr_routes_AB_est_intersec_ROI[arr_beacons_ROI[
+                        indiv_ROI[idx]]][arr_beacons_ROI[indiv_ROI[
+                                idx+1]]])   
+    
+    
+    return ROI_calc
+    
+
+def evaluation(individual, fit_func_eval, arr_routes_AB_est_intersec_eval, 
+               arr_beacons_eval,dict_routes_AB_eval):
     "Selecciona y calcula la Funcion Objetivo de un individuo"
 #        print individual
     
-
 ###########################Region de Interes###################################    
     if fit_func_eval == 5 or fit_func_eval == 6:
     
-        ROI_algae_sampled = 0
+        ROI_algae_sampled = ROI_calculation(individual,arr_routes_AB_est_intersec_eval,
+                                            arr_beacons_eval)
+        
+    if fit_func_eval == 9:
+        
+        ROI_algae_distributed = ROI_distribution(individual,arr_beacons_eval, 
+                                                 dict_routes_AB_eval)
     
-        for idx,indiv in enumerate(individual):
-            if idx < len(individual)-1:
-    ##                print individual[idx], individual[idx+1]
-    ##                print "===="
-    #                print arr_sampled_grid_pattern[idx][idx+1]
-                ROI_algae_sampled = ROI_algae_sampled + (
-                        param.arr_sampled_grid_pattern[param.arr_subgroup[
-                                individual[idx]]][param.arr_subgroup[individual[
-                                        idx+1]]])
+#==============================================================================
+#         for idx,indiv in enumerate(individual):
+#             if idx < len(individual)-1:
+#     ##                print individual[idx], individual[idx+1]
+#     ##                print "===="
+#     #                print arr_sampled_grid_pattern[idx][idx+1]
+#                 ROI_algae_sampled = ROI_algae_sampled + (
+#                         arr_routes_AB_est_intersec_eval[arr_beacons_eval[
+#                                 individual[idx]]][arr_beacons_eval[individual[
+#                                         idx+1]]])
+#==============================================================================
+                
 
 ##        print ROI_algae_sampled
 
@@ -196,7 +260,7 @@ def evaluation(individual, fit_func_eval):
 
     tot_intersec_count = 0 # contador de intersecciones en individuos
     tot_intersec_count = fs_intersec_finding_func.invalid_route_count(
-            individual, param.arr_allowed_routes, param.arr_subgroup)
+            individual, param.arr_allowed_routes, arr_beacons_eval)
    
 #==============================================================================
 ##                     1-  Death Penalty + Penalty Factor -- km2
@@ -243,11 +307,19 @@ def evaluation(individual, fit_func_eval):
     
     
 #==============================================================================
-# #                     5-Penalty Factor -- ROI        
+# #                     5-Penalty Factor -- ROI exponential  
 #==============================================================================
     elif fit_func_eval == 5:
-        answer2 =((1-float(tot_intersec_count)/(len(individual)-1))*
-                  ROI_algae_sampled,)
+#==============================================================================
+#         answer2 =((1-float(tot_intersec_count)/(len(individual)-1))*
+#                   ROI_algae_sampled,)
+#==============================================================================
+        answer2 =((np.exp(-tot_intersec_count/8))*ROI_algae_sampled,)
+        
+#==============================================================================
+#         print individual, answer2
+#         print tot_intersec_count, ROI_algae_sampled
+#==============================================================================
 
 #==============================================================================
 # #                    6-  Death Penalty -- ROI        
@@ -259,7 +331,7 @@ def evaluation(individual, fit_func_eval):
             answer2 =(ROI_algae_sampled,)
     
 #==============================================================================
-#                     7-  Death Penalty -- ROI variation        
+#                     7-  Death Penalty -- variation coefficient      
 #==============================================================================  
     elif fit_func_eval == 7:
         if tot_intersec_count > 0:
@@ -267,12 +339,18 @@ def evaluation(individual, fit_func_eval):
         else:
             answer2 =(coefficient_variation(individual),)  
 #==============================================================================
-#                     8- Penalty Factor -- ROI variation        
+#                     8- Penalty Factor -- variation coefficient        
 #==============================================================================  
-    elif param.FIT_FUNC_TYPE == 8:
+    elif fit_func_eval == 8:
         answer2 =((1-float(tot_intersec_count)/(len(
                 individual)-1))*coefficient_variation(individual),)  
-    
+        
+#==============================================================================
+#                     9- Penalty Factor -- ROI distribution        
+#==============================================================================  
+    elif fit_func_eval == 9:
+        answer2 =((np.exp(-tot_intersec_count/8))*ROI_algae_distributed,) 
+        
     else:
         print 'FIT_FUNC_TYPE ERROR!'
     
@@ -309,7 +387,7 @@ def genetic_algorithm(pop):
 #     # Inicio de Evolucion
 #==============================================================================
     for g in range(param.NGEN):
-#        print 'Generation=', g, time.ctime()
+#        print 'Generation=', g #, time.ctime()
         gen_best=[]
         
         # Seleccion de inviduos para la proxima generacion
@@ -392,7 +470,7 @@ def genetic_algorithm(pop):
     best_ind = tools.selBest(pop, 1)[0]
     worst_ind = tools.selWorst(pop,1)[0]
     
-##    print evaluation(best_ind), max(fits)
+    print best_ind.fitness, max(fits)
     
     last_pop = pop
     
@@ -428,8 +506,13 @@ def genetic_algorithm(pop):
 
 #####Registro de la funcion evaluate luego de definir la funcion evaluation            
 
-def assign_fit_func(fit_func):
-    toolbox.register("evaluate",evaluation, fit_func_eval=fit_func)
+def assign_eval_parameters(fit_func, arr_routes_AB_est_intersec, arr_beacons,
+                           dict_routes_AB_est_intersec):
+    toolbox.register("evaluate",evaluation, 
+                     fit_func_eval = fit_func, 
+                     arr_routes_AB_est_intersec_eval = arr_routes_AB_est_intersec,
+                     arr_beacons_eval = arr_beacons, 
+                     dict_routes_AB_eval = dict_routes_AB_est_intersec)
 
 #==============================================================================
 # def subgroup_selection():
