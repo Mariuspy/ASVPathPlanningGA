@@ -25,6 +25,7 @@ Laboratory of Distributed Systems - Faculty of Engineering - National University
 ```
 python fs_MainOptimYpakaraiLakeTSPGAWithAlgaeImprovementRate3.py
 ```
+###THE DESCRIPTION IS OUTDATED!!
 
 #### 1- Introduction
 The simulator implements an adaptive strategy to find and track algae bloom. It consists of two phases, an exploratory phase and an intensification phase. During the exploratory phase, the path is calculated in order to maximize the covered area by the ASV; while in the intensification phase the region where the region with bloom is intensified.
@@ -66,4 +67,4 @@ _Files_:
 - _fs_ga_func.py_: Module containing GA functions
 - _parameters_opt_ga.py_: Module containing parameters of the simulation.
 - _combination.csv_ : Matrix N_BEACONS x N_BEACONS, indicating the valid routes between origin and destination beacon. "0" means is a valid route.
-- _alllowed_routes_positive.csv_ (inverse of combination.csv): Matrix N_BEACONS x N_BEACONS, indicating the valid routes between origin and destination beacon. "1" means is a valid route.te.
+- _alllowed_routes_positive.csv_ (inverse of combination.csv): Matrix N_BEACONS x N_BEACONS, indicating the valid routes between origin and destination beacon. "1" means is a valid route.
