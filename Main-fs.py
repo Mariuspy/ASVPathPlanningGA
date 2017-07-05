@@ -15,6 +15,7 @@ import parameters_opt_ga as param
 #import parameters_fullstrategy as param2
 import time
 
+import csv
 
 
 ####Initial Parameters Definition
@@ -22,11 +23,13 @@ import time
 print '=====START MAIN ROUTINE=====' 
 print time.ctime()
 
-experiment = 1
-strategy_phase = 0
-fitness_function = 3
-ab_flag = 0
-ab_increase_flag = 0
+EXPERIMENT = 9
+MAX_TIME_FRAMES = 3
+GROUP_EST_SIZE = 5 # AB Squares separate by more than 5 squares form a 
+                  # different AB group
+
+FITNESS_FUNC_EXPL = 3
+FITNESS_FUNC_INT = 9
 
 '''
 Fitness Function Options
@@ -36,23 +39,26 @@ Fitness Function Options
 2 - Penalty Factor -- coverage %
 3 - Exponential Penalty Factor -- coverage %
 4 - Penalty Factor -- size km2
-5 - Penalty Factor -- ROI
+5 - Penalty Factor -- ROI exponential
 6 -  Death Penalty -- ROI
 7 -  Death Penalty -- coefficient of variation
-8 - Penalty Factor -- coefficient of variation   
+8 - Penalty Factor -- coefficient of variation
+9 -    
 '''
 
+ab_flag = 0
+ab_increase_flag = 0
+
+strategy_phase = 0
 time_frames = 0 # number of time frames executed
 arr_beacons = np.arange(60,dtype='uint8')
 ab_conditions_coord = []
 ab_groups = []
 ab_groups_sizes = []
 prev_ab_groups_sizes = []
-
-
-MAX_TIME_FRAMES = 3
-GROUP_EST_SIZE = 5 # AB Squares separate by more than 5 squares form a 
-                  # different AB group
+dict_routes_AB_est_intersec = {}
+                 
+fitness_function = FITNESS_FUNC_EXPL
 
 OptimGA.print_parameters() # Impresion de parametros del algoritmo genetico
 
@@ -69,8 +75,22 @@ for idx in range(MAX_TIME_FRAMES):
 samp_grid =  np.zeros((param.GRID_X_DIV,param.GRID_Y_DIV),
                             dtype = 'uint16') 
 
-arr_routes_AB_est_intersec = np.zeros((param.N_BEACON,param.N_BEACON),
+arr_routes_AB_est_intersec= np.zeros((param.N_BEACON,param.N_BEACON),
                             dtype = 'uint16')
+
+####Print parameters
+
+print "MAIN PROGRAM PARAMETERS"
+
+print 'Experiment No. = ', EXPERIMENT
+print 'Max Time Frames = ', MAX_TIME_FRAMES
+print 'Bloom Margin Distance (No. of Squares Side) =', GROUP_EST_SIZE
+print 'Fitness Function Exploration =',FITNESS_FUNC_EXPL 
+print 'Fitness Function Intensification =', FITNESS_FUNC_INT 
+
+
+print '========================================================================'
+
 
 
 while time_frames < MAX_TIME_FRAMES:
@@ -89,10 +109,15 @@ while time_frames < MAX_TIME_FRAMES:
         print 'INTENSIFICATION PHASE'
         print '------Find Route-AB Intersec Matrix'
         print '\n'
-        arr_routes_AB_est_intersec = AB_est.main(samp_grid) # Routes between 
+        arr_routes_AB_est_intersec, dict_routes_AB_est_intersec  = AB_est.main(samp_grid) # Routes between 
                                                 # beacons and Estimated 
                                                 # (sampled) AB intersections
                                                 # matrix
+        with open('Results/dict_exp'+str(EXPERIMENT)+str(time_frames)+'.csv', 'wb') as csv_file:
+            writer = csv.writer(csv_file)
+            for key, value in dict_routes_AB_est_intersec.items():
+                writer.writerow([key, value])
+        
     else:
         print 'EXPLORATORY PHASE'
         print '------Reset Route-AB Intersec Matrix'
@@ -101,16 +126,17 @@ while time_frames < MAX_TIME_FRAMES:
                             dtype = 'uint16')
 
     
-    np.savetxt('Results/arr_routes_AB_est_intersec'+str(time_frames)+'_'+str(experiment)+'.csv', 
+    np.savetxt('Results/arr_routes_AB_est_intersec_exp'+str(EXPERIMENT)+'_'+str(time_frames)+'.csv', 
                arr_routes_AB_est_intersec, fmt = '%i', delimiter=",")    
                                             # Used in intensification phase
     print '------ Genetic Algorithm'                                            
 #    print arr_routes_AB_est_intersec
     
     best_indiv = OptimGA.main(
-            fitness_function, arr_beacons, arr_routes_AB_est_intersec)
+            fitness_function, arr_beacons, arr_routes_AB_est_intersec, 
+            dict_routes_AB_est_intersec)
     
-    np.savetxt('Results/best_indiv'+str(time_frames)+'_'+str(experiment)+'.csv', 
+    np.savetxt('Results/best_indiv_exp'+str(EXPERIMENT)+'_'+str(time_frames)+'.csv', 
                best_indiv, fmt = '%i', delimiter=",") 
     
     print '------ Evaluate Sampling'
@@ -119,7 +145,7 @@ while time_frames < MAX_TIME_FRAMES:
 #     
     samp_grid = AB_sampled.main(best_indiv, ab_conditions_coord[time_frames])
     
-    np.savetxt('Results/samp_grid'+str(time_frames)+'_'+str(experiment)+'.csv', samp_grid, 
+    np.savetxt('Results/samp_grid_exp'+str(EXPERIMENT)+'_'+str(time_frames)+'.csv', samp_grid, 
                fmt = '%i', delimiter=",")
     
     #   FIND SAMP COORDINATES
@@ -225,7 +251,6 @@ while time_frames < MAX_TIME_FRAMES:
         if np.sum(samp_grid_loc) != 0:
             
             
-            
             if ab_flag_loc == 0:
                 print 'Moving to Intensification Phase'
                 ab_flag_loc = 1
@@ -233,9 +258,8 @@ while time_frames < MAX_TIME_FRAMES:
                     
                 print 'Before', arr_beacons_loc, len(arr_beacons_loc)
                 arr_beacons_loc = np.array(select_beacons_subgroup(ab_groups))
-                fitness_function_loc = 5
+                fitness_function_loc = FITNESS_FUNC_INT
                 print 'After', arr_beacons_loc, len(arr_beacons_loc)
-                prev_ab_groups_sizes_loc = ab_groups_sizes
                 
             else:
                 print 'Remain in Intensification Phase'
@@ -243,11 +267,11 @@ while time_frames < MAX_TIME_FRAMES:
                 for idx in range(len(ab_groups_sizes)-len(prev_ab_groups_sizes_loc)):
                     prev_ab_groups_sizes_loc.append(0) # Para comparar listas con igual longitud
             
-                    print 'ab_groups size', ab_groups_sizes
-                    print 'prev_ab_groups_sizes', prev_ab_groups_sizes_loc
+                print 'ab_groups size', ab_groups_sizes
+                print 'prev_ab_groups_sizes', prev_ab_groups_sizes_loc
             
-                    for idx, ab_size in enumerate(ab_groups_sizes):
-                        print 'ab_size, prev_groups_sizes[idx]', ab_size, prev_ab_groups_sizes[idx]
+                for idx, ab_size in enumerate(ab_groups_sizes):
+                    print 'ab_size, prev_groups_sizes[idx]', ab_size, prev_ab_groups_sizes[idx]
                 
                     if ab_size>=prev_ab_groups_sizes_loc[idx]:
                         print 'Remain in intensification Phase'
@@ -255,17 +279,17 @@ while time_frames < MAX_TIME_FRAMES:
                     
                         print 'Before', arr_beacons_loc, len(arr_beacons_loc)
                         arr_beacons_loc = np.array(select_beacons_subgroup(ab_groups))
-                        fitness_function_loc = 5
+                        fitness_function_loc = FITNESS_FUNC_INT
                         print 'After', arr_beacons_loc, len(arr_beacons_loc)
                         
-                        prev_ab_groups_sizes_loc = ab_groups_sizes
+                        
                 
                         break # Al detectar aumento o igual tamano de un AB, se permanece en fase intensificacion
                     
                     else:
                         print 'Moving to Exploratory Phase'
                         ab_increase_flag_loc = 0
-                        fitness_function_loc = 2
+                        fitness_function_loc = FITNESS_FUNC_EXPL 
                         arr_beacons_loc = np.arange(60,dtype='uint8')
         else:
             if ab_flag_loc:
@@ -275,13 +299,17 @@ while time_frames < MAX_TIME_FRAMES:
             
             ab_flag_loc = 0
             ab_increase_flag_loc = 0
-            fitness_function_loc = 2
+            fitness_function_loc = FITNESS_FUNC_EXPL
             arr_beacons_loc = np.arange(60,dtype='uint8')
         
-        np.savetxt('Results/sub_group_beacons'+str(time_frames)+'_'+str(experiment)+'.csv', 
+        np.savetxt('Results/sub_group_beacons_exp'+str(EXPERIMENT)+'_'+str(time_frames)+'.csv', 
                arr_beacons_loc, fmt = '%i', delimiter=",") 
         
+        
+        prev_ab_groups_sizes_loc = ab_groups_sizes
+        
         print 'Prev_ab_group_sizes', prev_ab_groups_sizes, ab_groups_sizes
+           
         
         return (ab_flag_loc,ab_increase_flag_loc, arr_beacons_loc, fitness_function_loc, 
                 prev_ab_groups_sizes_loc)
