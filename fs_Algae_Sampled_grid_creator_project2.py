@@ -28,7 +28,7 @@ def main(arr_alg_pattern):
     
 
     
-    print 'Start fs_algae', time.ctime() # Para registrar duracion de simulacion
+    print 'Start fs_algae routine', time.ctime() # Para registrar duracion de simulacion
     print 'File name = ' , os.path.basename(__file__) # Para registrar nombre de 
     
     
@@ -39,6 +39,7 @@ def main(arr_alg_pattern):
     
 #    arr_sampled_grid = np.zeros((param.GRID_X_DIV,param.GRID_Y_DIV))
     arr_sampled_grid_pattern = np.zeros((param.N_BEACON,param.N_BEACON),dtype='uint8')
+    dict_sampled_grid = {}
     
 
     
@@ -52,8 +53,10 @@ def main(arr_alg_pattern):
     def check_all_intersection(ruta_test,bal_ori,bal_dest):
         "Calcula todas las intersecciones"
         intersec_check = 0 
-        if bal_ori == 7 and bal_dest == 54:
-            print bal_ori, bal_dest
+#==============================================================================
+#         if bal_ori == 7 and bal_dest == 54:
+#             print bal_ori, bal_dest
+#==============================================================================
         for x in range(param.GRID_X_DIV):
             for y in range(param.GRID_Y_DIV):
                 if arr_alg_pattern[x][y]:# and param2.arr_inlake_square[x][y]:
@@ -63,14 +66,24 @@ def main(arr_alg_pattern):
                             ruta_test,centro_test)
     ##                if intersec_check == 2 and arr_sampled_grid_pattern[
     ##                    bal_ori][bal_dest]<1:
-                    if bal_ori == 7 and bal_dest == 54:
-                        print '-----------', centro_test, intersec_check
+#==============================================================================
+#                     if bal_ori == 7 and bal_dest == 54:
+#                         print '-----------', centro_test, intersec_check
+#==============================================================================
                     if intersec_check >= 2:    
-    ##        print grid_x,grid_y
-                        if bal_ori == 7 and bal_dest == 54:
-                            print '================', centro_test, intersec_check
+#==============================================================================
+#     ##        print grid_x,grid_y
+#                         if bal_ori == 7 and bal_dest == 54:
+#                             print '================', centro_test, intersec_check
+#==============================================================================
     
                         arr_sampled_grid_pattern[bal_ori][bal_dest]+=1
+                        
+                        if str(bal_ori)+'_'+str(bal_dest) in dict_sampled_grid:
+                            dict_sampled_grid[str(bal_ori)+'_'+str(bal_dest)].append([x,y])
+                        else:
+                            dict_sampled_grid[str(bal_ori)+'_'+str(bal_dest)] = [[x,y]]
+                            
 #==============================================================================
 #                         if arr_sampled_grid_pattern[bal_ori*param.N_BEACON+x][
 #                                 param.N_BEACON*bal_dest+y]==1:
@@ -96,8 +109,6 @@ def main(arr_alg_pattern):
     for idx in range(param.N_BEACON):
         for idx2 in range(param.N_BEACON):
     ##        print idx, idx2
-            if idx == 7 and idx2 == 54:
-                print idx, idx2
             if param2.arr_allowed_routes_pos[idx][idx2]:
     ##            print idx, idx2
                 ruta_test = [param2.list_coord[idx],param2.list_coord[idx2]]
@@ -132,12 +143,12 @@ def main(arr_alg_pattern):
 #        fmt = '%i', delimiter=",")
 #==============================================================================
     
-    print 'Ending fs_algae', time.ctime()
+    print 'Ending fs_algae routine', time.ctime()
     print '\n'
     
     print len(arr_sampled_grid_pattern)
     
-    return arr_sampled_grid_pattern
+    return arr_sampled_grid_pattern, dict_sampled_grid
 
 if __name__ == '__main__':
     main()
