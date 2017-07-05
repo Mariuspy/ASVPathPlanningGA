@@ -392,5 +392,14 @@ def main(fit_func_type, arr_subgroup,arr_routes_AB_est_intersec,
     
 
 if __name__ == '__main__':
-    main()
+    init_fit_func_type = 3
+    init_all_beacons = np.arange(60,dtype='uint8')
+    init_arr_routes_AB_est_interc = np.zeros((param.N_BEACON,param.N_BEACON),
+                            dtype = 'uint16')
+    init_dict_Routes_AB_est_intersec = {}
+    
+    print_parameters()
+    
+    main(init_fit_func_type, init_all_beacons,init_arr_routes_AB_est_interc,
+         init_dict_Routes_AB_est_intersec)
     
