@@ -12,8 +12,8 @@ import csv
 # # PARAMETROS
 #==============================================================================
 
-INPUT1 = 'arr_alg_pattern_size_event_tracking3.csv' #
-INPUT2 = 'sampled_grid_event_tracking.csv' # used in evaluation function (fs_ga_func.py)
+INPUT1 = 'Data/arr_alg_pattern_size_event_tracking3.csv' #
+INPUT2 = 'Data/sampled_grid_event_tracking.csv' # used in evaluation function (fs_ga_func.py)
 INPUT3 = 'Constants/combination.csv' # used in pop_valid_creation, evaluation 
                                     # and invalid_route_count functions 
                                     # (fs_ga_func.py and fs_MainOptim....py)
@@ -24,6 +24,9 @@ INPUT5 = 'Constants/intersection_routes.csv'# used in intersec_count_f function
 INPUT6 = 'best_last_pop.csv'#
 #INPUT7 = 'sampled_grid_event_tracking2.csv' # Not used in GA
 INPUT8 = 'Constants/in_lake.csv'
+INPUT9 = 'Constants/in_lake_center.csv'
+INPUT10 = 'Constants/allowed_routes_positive.csv'
+
 
 OUTPUT1 = 'Results/best_indiv_test_ngen100_sim1.csv'
 OUTPUT2 = 'Results/improve_rate_ngen100_sim1.csv'
@@ -35,9 +38,9 @@ N_BEACON = 60
 N_SIM = 1
 CXPB = 0.8
 MUTPB =  0.2
-NGEN = 10
+NGEN = 100
 POPU = 100
-ELIT_RATE = 0.05 
+ELIT_RATE = 0.2 
 FRANJA = 20
 ATT_FACTOR = 1000 # Intentos para encontrar siguiente baliza en poblacion inicial valida
 ATT_POPU = 10000 # Intentos para encontrar una poblacion inicial validad  de POPU individuos
@@ -68,8 +71,10 @@ STRATEGY_PHASE = 1 #NO CAMBIAR HASTA ENCONTRAR FUNCION PARA SELECCION DE
 #==============================================================================
 # # CONSTANTES
 #==============================================================================
-arr_sampled_grid_pattern = np.loadtxt(INPUT2, dtype = 'uint8', 
-                                      delimiter =',')
+#==============================================================================
+# arr_sampled_grid_pattern = np.loadtxt(INPUT2, dtype = 'uint8', 
+#                                       delimiter =',')
+#==============================================================================
 
 ###############################################################################
 
@@ -98,6 +103,8 @@ else:
 #==============================================================================
 
 arr_allowed_routes = np.loadtxt(INPUT3,dtype = 'uint8',delimiter =',' )
+
+arr_allowed_routes_pos = np.loadtxt(INPUT10,dtype = 'uint8',delimiter =',') 
 
 ###############################################################################
 
@@ -200,3 +207,5 @@ arr_centers = np.array(lst_centers)
 arr_centers_coord = GRID_SIZE*arr_centers+GRID_SIZE/2
 
 arr_alg_pattern = np.loadtxt(INPUT1,dtype ='uint8', delimiter =',')
+
+arr_inlake_center = np.loadtxt(INPUT9,dtype ='uint8', delimiter =',')
