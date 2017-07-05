@@ -124,6 +124,7 @@ while time_frames < MAX_TIME_FRAMES:
         print '\n'
         arr_routes_AB_est_intersec = np.zeros((param.N_BEACON,param.N_BEACON),
                             dtype = 'uint16')
+        dict_routes_AB_est_intersec = {}
 
     
     np.savetxt('Results/arr_routes_AB_est_intersec_exp'+str(EXPERIMENT)+'_'+str(time_frames)+'.csv', 
