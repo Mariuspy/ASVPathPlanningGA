@@ -4,7 +4,8 @@
 # Fecha de Creacion: 01/06/2017
 # Descripcion: Crea una matriz origen x destino indicando si pasa por cuadro de
 #               mancha de algas.
-               Basada en Algae_SAmpled_grid_creator
+#               Basada en Algae_SAmpled_grid_creator
+#               Nombre original fs_Alage_Sampled_grid_creator_project2.py               
 # Input:  Matriz de rutas validas ('allowed_routes_positive.csv')
 #         Lista de coordenadas de balizas ('ListaCoordenadasConvRefMetros.csv')
 #         Patron de mancha de algas('arr_pattern_c.csv')
@@ -59,7 +60,7 @@ def main(arr_alg_pattern):
 #==============================================================================
         for x in range(param.GRID_X_DIV):
             for y in range(param.GRID_Y_DIV):
-                if arr_alg_pattern[x][y]:# and param2.arr_inlake_square[x][y]:
+                if param2.samp_pattern[x][y]:# and param2.arr_inlake_square[x][y]:
                     centro_test = param2.arr_centers_coord[x][y]
                     intersec_check = \
                         fs_intersec_finding_func.check_intersection(    
