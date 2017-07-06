@@ -4,8 +4,9 @@
 #  Fecha de Creacion: 19/04/2016
 #  Descripcion: Reestructuracion del codigo
 #               Realiza optimizacion con GA Considera cobertura de cuadros en 
-#               zona de manchas como funcion
-#  objetivo 
+#               zona de manchas como funcion objetivo
+#               Nombre Original fs_MainOptimYpakaraiLakeTSPGAWithAlgaeIMprove-
+#               -mentRate3.py 
 #  Creado a partir Optimization-YpakaraiLake-TSP-GA.py
 #  Input:  Coordenadas de balizas ('ListaCoordenadasConvRefMetros.csv')
 #          Patron de mancha de algas('arr_alg_pattern.csv')
