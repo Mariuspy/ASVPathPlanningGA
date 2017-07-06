@@ -61,7 +61,7 @@ def check_all_intersection(ruta_test,bal_ori,bal_dest, arr_sampled_grid):
     
     for x in range(param.GRID_X_DIV):
         for y in range(param.GRID_Y_DIV):
-            if param.arr_alg_pattern[x][y] and param.arr_inlake_square[x][y] and \
+            if param.samp_pattern[x][y] and param.arr_inlake_square[x][y] and \
                 check_squares(ruta_test,x,y):
 #                print x,y
                 centro_test = param.arr_centers_coord[x][y]
