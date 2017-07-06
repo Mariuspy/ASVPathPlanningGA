@@ -23,7 +23,7 @@ import csv
 print '=====START MAIN ROUTINE=====' 
 print time.ctime()
 
-EXPERIMENT = 9
+EXPERIMENT = 10
 MAX_TIME_FRAMES = 3
 GROUP_EST_SIZE = 5 # AB Squares separate by more than 5 squares form a 
                   # different AB group
@@ -73,7 +73,9 @@ for idx in range(MAX_TIME_FRAMES):
 #####Creacion de samp grid sin datos
 
 samp_grid =  np.zeros((param.GRID_X_DIV,param.GRID_Y_DIV),
-                            dtype = 'uint16') 
+                            dtype = 'uint16')
+
+
 
 arr_routes_AB_est_intersec= np.zeros((param.N_BEACON,param.N_BEACON),
                             dtype = 'uint16')
@@ -148,6 +150,16 @@ while time_frames < MAX_TIME_FRAMES:
     
     np.savetxt('Results/samp_grid_exp'+str(EXPERIMENT)+'_'+str(time_frames)+'.csv', samp_grid, 
                fmt = '%i', delimiter=",")
+    
+    for idx,element_x in enumerate(samp_grid):
+        for idx2,element_y in enumerate(element_x):
+#            print idx, idx2, element_y
+            if element_y != 0:
+                param.samp_pattern[idx][idx2]=1
+                print 'This'
+                
+    np.savetxt('Results/samp_pattern_exp'+str(EXPERIMENT)+'_'+str(time_frames)+'.csv', param.samp_pattern, 
+               fmt = '%i', delimiter=",")          
     
     #   FIND SAMP COORDINATES
     #   SEPARATE IN GROUPS
