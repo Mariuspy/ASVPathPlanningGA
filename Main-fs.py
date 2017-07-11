@@ -23,14 +23,18 @@ import csv
 print '=====START MAIN ROUTINE=====' 
 print time.ctime()
 
-EXPERIMENT = 10
+EXPERIMENT = 13
 MAX_TIME_FRAMES = 3
-GROUP_EST_SIZE = 5 # AB Squares separate by more than 5 squares form a 
-                  # different AB group
+GROUP_EST_SIZE = 5 # AB Squares separated by more than 5 squares form a 
+                   # different AB group
 
 FITNESS_FUNC_EXPL = 3
-FITNESS_FUNC_INT = 9
+FITNESS_FUNC_INT = 5
 
+PHASE_SIZE_THR = 0.75
+EXPL_PH = 0
+INT_PH = 1
+HYB_PH = 2
 '''
 Fitness Function Options
 ------------------------
@@ -43,13 +47,16 @@ Fitness Function Options
 6 -  Death Penalty -- ROI
 7 -  Death Penalty -- coefficient of variation
 8 - Penalty Factor -- coefficient of variation
-9 -    
+9 - Penalty Factor -- ROI dstributed
 '''
 
 ab_flag = 0
 ab_increase_flag = 0
 
-strategy_phase = 0
+strategy_phase = EXPL_PH
+
+hybrid_count = 0
+
 time_frames = 0 # number of time frames executed
 arr_beacons = np.arange(60,dtype='uint8')
 ab_conditions_coord = []
@@ -257,53 +264,119 @@ while time_frames < MAX_TIME_FRAMES:
     def ab_evaluation(samp_grid_loc, ab_groups_sizes_loc, prev_ab_groups_sizes_loc, 
                       arr_beacons_loc,ab_flag_loc,samp_grid_coord_loc, 
                           fitness_function_loc):
+        "Evaluate the conditions of the AB and selects the next phase accordingly"
+        
+        global hybrid_count
         
         ab_increase_flag_loc = 0
         ab_groups,ab_groups_sizes = find_ab_groups(samp_grid_coord_loc)
         
         if np.sum(samp_grid_loc) != 0:
             
+            for idx in range(len(ab_groups_sizes)-len(prev_ab_groups_sizes_loc)):
+                  prev_ab_groups_sizes_loc.append(0) # Para comparar listas con igual longitud
+       
+            print 'ab_groups size', ab_groups_sizes
+            print 'prev_ab_groups_sizes', prev_ab_groups_sizes_loc
+          
+            for idx, ab_size in enumerate(ab_groups_sizes):
+                print '== ab_size, prev_groups_sizes[idx]', ab_size, prev_ab_groups_sizes[idx]
             
-            if ab_flag_loc == 0:
-                print 'Moving to Intensification Phase'
-                ab_flag_loc = 1
-                ab_increase_flag_loc = 1
+                if ab_size>prev_ab_groups_sizes_loc[idx]:
                     
+                    ab_increase_flag_loc = 1
+                    break
+            
+            
+            if ab_increase_flag_loc == 1:
+                
+                if strategy_phase == INT_PH:
+                    print 'Remain in Intensification Phase'
+                else:
+                    print 'Moving to Intensification Phase'
+                
+                
+                strategy_phase == INT_PH
+                fitness_function_loc = FITNESS_FUNC_INT
+                hybrid_count = 0
+                
                 print 'Before', arr_beacons_loc, len(arr_beacons_loc)
                 arr_beacons_loc = np.array(select_beacons_subgroup(ab_groups))
-                fitness_function_loc = FITNESS_FUNC_INT
                 print 'After', arr_beacons_loc, len(arr_beacons_loc)
-                
+
             else:
-                print 'Remain in Intensification Phase'
-                       
-                for idx in range(len(ab_groups_sizes)-len(prev_ab_groups_sizes_loc)):
-                    prev_ab_groups_sizes_loc.append(0) # Para comparar listas con igual longitud
-            
-                print 'ab_groups size', ab_groups_sizes
-                print 'prev_ab_groups_sizes', prev_ab_groups_sizes_loc
-            
-                for idx, ab_size in enumerate(ab_groups_sizes):
-                    print 'ab_size, prev_groups_sizes[idx]', ab_size, prev_ab_groups_sizes[idx]
+                if strategy_phase == HYB_PH:
+                    print 'Remain in Hybrid Phase'
+                else:
+                    print 'Moving to Hybrid Phase'
                 
-                    if ab_size>=prev_ab_groups_sizes_loc[idx]:
-                        print 'Remain in intensification Phase'
-                        ab_increase_flag_loc = 1
-                    
-                        print 'Before', arr_beacons_loc, len(arr_beacons_loc)
-                        arr_beacons_loc = np.array(select_beacons_subgroup(ab_groups))
-                        fitness_function_loc = FITNESS_FUNC_INT
-                        print 'After', arr_beacons_loc, len(arr_beacons_loc)
-                        
-                        
+                strategy_phase == HYB_PH
+                fitness_function_loc = FITNESS_FUNC_INT
+                hybrid_count += 1
                 
-                        break # Al detectar aumento o igual tamano de un AB, se permanece en fase intensificacion
-                    
-                    else:
-                        print 'Moving to Exploratory Phase'
-                        ab_increase_flag_loc = 0
-                        fitness_function_loc = FITNESS_FUNC_EXPL 
-                        arr_beacons_loc = np.arange(60,dtype='uint8')
+                
+                
+#==============================================================================
+#             ab_flag_loc == 1
+#                             
+#             for idx in range(len(ab_groups_sizes)-len(prev_ab_groups_sizes_loc)):
+#                  prev_ab_groups_sizes_loc.append(0) # Para comparar listas con igual longitud
+#       
+#             print 'ab_groups size', ab_groups_sizes
+#             print 'prev_ab_groups_sizes', prev_ab_groups_sizes_loc
+#          
+#             for idx, ab_size in enumerate(ab_groups_sizes):
+#                  print 'ab_size, prev_groups_sizes[idx]', ab_size, prev_ab_groups_sizes[idx]
+# 
+#             
+#             if ab_flag_loc == 0:
+#                 print 'Moving to Intensification Phase'
+#             else: 
+#                 print 'Remain in Intensification Phase'
+#                             
+#             
+#             
+#             if ab_flag_loc == 0:
+#                 
+# 
+#                 ab_increase_flag_loc = 1
+#                     
+#                 print 'Before', arr_beacons_loc, len(arr_beacons_loc)
+#                 arr_beacons_loc = np.array(select_beacons_subgroup(ab_groups))
+#                 fitness_function_loc = FITNESS_FUNC_INT
+#                 print 'After', arr_beacons_loc, len(arr_beacons_loc)
+#                 
+#             else:
+#                 print 'Remain in Intensification Phase'
+#                        
+#                 for idx in range(len(ab_groups_sizes)-len(prev_ab_groups_sizes_loc)):
+#                     prev_ab_groups_sizes_loc.append(0) # Para comparar listas con igual longitud
+#             
+#                 print 'ab_groups size', ab_groups_sizes
+#                 print 'prev_ab_groups_sizes', prev_ab_groups_sizes_loc
+#             
+#                 for idx, ab_size in enumerate(ab_groups_sizes):
+#                     print 'ab_size, prev_groups_sizes[idx]', ab_size, prev_ab_groups_sizes[idx]
+#                 
+#                     if ab_size<=PHASE_SIZE_THR*prev_ab_groups_sizes_loc[idx]:
+#                         
+#                         print 'Moving to Exploratory Phase'
+#                         ab_increase_flag_loc = 0
+#                         fitness_function_loc = FITNESS_FUNC_EXPL 
+#                         arr_beacons_loc = np.arange(60,dtype='uint8')                    
+#              
+#                         break # Evaluar
+# 
+# 
+#                         
+#                 print 'Remain in intensification Phase'
+#                 ab_increase_flag_loc = 1
+#                 fitness_function_loc = FITNESS_FUNC_INT
+#                 
+#                 print 'Before', arr_beacons_loc, len(arr_beacons_loc)
+#                 arr_beacons_loc = np.array(select_beacons_subgroup(ab_groups))
+#                 print 'After', arr_beacons_loc, len(arr_beacons_loc)
+#==============================================================================
         else:
             if ab_flag_loc:
                 print 'Moving to Exploratory Phase'
