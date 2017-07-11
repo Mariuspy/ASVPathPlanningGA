@@ -297,7 +297,7 @@ while time_frames < MAX_TIME_FRAMES:
                 
                 
                 strategy_phase == INT_PH
-                fitness_function_loc = FITNESS_FUNC_INT
+                fitness_function_loc = FITNESS_FUNC_INT#Cambiar de posicion
                 hybrid_count = 0
                 
                 print 'Before', arr_beacons_loc, len(arr_beacons_loc)
@@ -378,14 +378,15 @@ while time_frames < MAX_TIME_FRAMES:
 #                 print 'After', arr_beacons_loc, len(arr_beacons_loc)
 #==============================================================================
         else:
-            if ab_flag_loc:
-                print 'Moving to Exploratory Phase'
-            else:
+            if strategy_phase == EXPL_PH:
                 print 'Remain in Exploratory Phase'
+            else:
+                print 'Moving to Exploratory Phase'
+                    
             
             ab_flag_loc = 0
-            ab_increase_flag_loc = 0
-            fitness_function_loc = FITNESS_FUNC_EXPL
+#            ab_increase_flag_loc = 0
+            fitness_function_loc = FITNESS_FUNC_EXPL #Cambiar de POSICION!!
             arr_beacons_loc = np.arange(60,dtype='uint8')
         
         np.savetxt('Results/sub_group_beacons_exp'+str(EXPERIMENT)+'_'+str(time_frames)+'.csv', 
