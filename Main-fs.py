@@ -23,7 +23,7 @@ import csv
 print '=====START MAIN ROUTINE=====' 
 print time.ctime()
 
-EXPERIMENT = 13
+EXPERIMENT = 14
 MAX_TIME_FRAMES = 3
 GROUP_EST_SIZE = 5 # AB Squares separated by more than 5 squares form a 
                    # different AB group
@@ -121,15 +121,15 @@ while time_frames < MAX_TIME_FRAMES:
         
         arr_routes_AB_est_intersec = np.zeros((param.N_BEACON,param.N_BEACON),
                             dtype = 'uint16')
-        param.dict_routes_AB_est_intersec = {}
+        dict_routes_AB_est_intersec = {}
         
         best_indiv = OptimGA.main(fitness_function, arr_beacons, 
                                   arr_routes_AB_est_intersec, 
-                                  param.dict_routes_AB_est_intersec) 
+                                  dict_routes_AB_est_intersec) 
         
     else:
         print '-------Find Route-AB Intersec Matrix'
-        arr_routes_AB_est_intersec, param.dict_routes_AB_est_intersec  = AB_est.main(samp_grid) # Routes between 
+        arr_routes_AB_est_intersec, dict_routes_AB_est_intersec  = AB_est.main(samp_grid) # Routes between 
                                                 # beacons and Estimated 
                                                 # (sampled) AB intersections
                                                 # matrix
@@ -139,7 +139,7 @@ while time_frames < MAX_TIME_FRAMES:
             
             best_indiv = OptimGA.main(fitness_function, arr_beacons, 
                                       arr_routes_AB_est_intersec, 
-                                      param.dict_routes_AB_est_intersec)#REPLACE BY MOGA LATER!!
+                                      dict_routes_AB_est_intersec)#REPLACE BY MOGA LATER!!
         
         else:
             print 'INTENSIFICATION PHASE'
@@ -147,14 +147,14 @@ while time_frames < MAX_TIME_FRAMES:
             
             best_indiv = OptimGA.main(fitness_function, arr_beacons, 
                                       arr_routes_AB_est_intersec, 
-                                      param.dict_routes_AB_est_intersec)
+                                      dict_routes_AB_est_intersec)
              
             
             
         
     with open('Results/dict_exp'+str(EXPERIMENT)+'_'+str(time_frames)+'.csv', 'wb') as csv_file:
         writer = csv.writer(csv_file)
-        for key, value in param.dict_routes_AB_est_intersec.items():
+        for key, value in dict_routes_AB_est_intersec.items():
             writer.writerow([key, value])
             
     np.savetxt('Results/arr_routes_AB_est_intersec_exp'+str(EXPERIMENT)+'_'+str(time_frames)+'.csv', 

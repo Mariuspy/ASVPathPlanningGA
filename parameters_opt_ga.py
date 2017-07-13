@@ -210,5 +210,5 @@ arr_centers_coord = GRID_SIZE*arr_centers+GRID_SIZE/2
 
 arr_inlake_center = np.loadtxt(INPUT9,dtype ='uint8', delimiter =',')
 
-samp_pattern =  np.zeros((GRID_X_DIV,GRID_Y_DIV),
-                            dtype = 'uint8') 
+samp_pattern =  np.zeros((GRID_X_DIV,GRID_Y_DIV),dtype = 'uint8') 
+
