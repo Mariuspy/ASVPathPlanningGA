@@ -57,7 +57,7 @@ def check_all_intersection(ruta_test,bal_ori,bal_dest, arr_sampled_grid):
     "Calcula intersecciones de todas las rutas con cuadros de grilla"
     
     intersec_check = 0
-
+    dict_routes_AB_est_intersec = {}
     
     for x in range(param.GRID_X_DIV):
         for y in range(param.GRID_Y_DIV):
@@ -70,11 +70,17 @@ def check_all_intersection(ruta_test,bal_ori,bal_dest, arr_sampled_grid):
                         ruta_test,centro_test)
 ##                if intersec_check == 2 and arr_sampled_grid_pattern[
 ##                    bal_ori][bal_dest]<1:
-                if intersec_check == 2:    
+                if intersec_check >= 2:    
 #                    print x,y
                     arr_sampled_grid[x][y]+=1
+        
+                    
+                    if str(bal_ori)+'_'+str(bal_dest) in dict_routes_AB_est_intersec:
+                        dict_routes_AB_est_intersec[str(bal_ori)+'_'+str(bal_dest)].append([x,y])
+                    else:
+                        dict_routes_AB_est_intersec[str(bal_ori)+'_'+str(bal_dest)] = [[x,y]]
     
-    return arr_sampled_grid
+    return arr_sampled_grid, dict_routes_AB_est_intersec
 
 def coefficient_variation(individual):
     "Calcula el coeficiente de variacion de las zonas muestreadas"
@@ -91,7 +97,8 @@ def coefficient_variation(individual):
                     idx+1]]]
     #        print ruta_test
             samp_grid = check_all_intersection(ruta_test, individual[idx], individual[
-                    idx+1],arr_sampled_grid)
+                    idx+1],arr_sampled_grid)[0]# check_all_intersection retorna
+                                               # 2 valores
 
      
     

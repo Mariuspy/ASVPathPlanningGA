@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+    # -*- coding: utf-8 -*-
 '''
 #==============================================================================
 # Fecha de Creacion: 01/06/2017
@@ -19,6 +19,8 @@ import os
 import parameters_algae_sampled_grid as param
 import parameters_opt_ga as param2
 import fs_intersec_finding_func
+import fs_ga_func
+
 
 #from FindRouteIntersections import find_orientation,find_between_points, 
 #   find_intersec
@@ -51,61 +53,63 @@ def main(arr_alg_pattern):
 
 
             
-    def check_all_intersection(ruta_test,bal_ori,bal_dest):
-        "Calcula todas las intersecciones"
-        intersec_check = 0 
 #==============================================================================
-#         if bal_ori == 7 and bal_dest == 54:
-#             print bal_ori, bal_dest
+#     def check_all_intersection(ruta_test,bal_ori,bal_dest):
+#         "Calcula todas las intersecciones"
+#         intersec_check = 0 
+# #==============================================================================
+# #         if bal_ori == 7 and bal_dest == 54:
+# #             print bal_ori, bal_dest
+# #==============================================================================
+#         for x in range(param.GRID_X_DIV):
+#             for y in range(param.GRID_Y_DIV):
+#                 if param2.samp_pattern[x][y]:# and param2.arr_inlake_square[x][y]:
+#                     centro_test = param2.arr_centers_coord[x][y]
+#                     intersec_check = \
+#                         fs_intersec_finding_func.check_intersection(    
+#                             ruta_test,centro_test)
+#     ##                if intersec_check == 2 and arr_sampled_grid_pattern[
+#     ##                    bal_ori][bal_dest]<1:
+# #==============================================================================
+# #                     if bal_ori == 7 and bal_dest == 54:
+# #                         print '-----------', centro_test, intersec_check
+# #==============================================================================
+#                     if intersec_check >= 2:    
+# #==============================================================================
+# #     ##        print grid_x,grid_y
+# #                         if bal_ori == 7 and bal_dest == 54:
+# #                             print '================', centro_test, intersec_check
+# #==============================================================================
+#     
+#                         arr_sampled_grid_pattern[bal_ori][bal_dest]+=1
+#                         
+#                         if str(bal_ori)+'_'+str(bal_dest) in dict_sampled_grid:
+#                             dict_sampled_grid[str(bal_ori)+'_'+str(bal_dest)].append([x,y])
+#                         else:
+#                             dict_sampled_grid[str(bal_ori)+'_'+str(bal_dest)] = [[x,y]]
+#                             
+# #==============================================================================
+# #                         if arr_sampled_grid_pattern[bal_ori*param.N_BEACON+x][
+# #                                 param.N_BEACON*bal_dest+y]==1:
+# #                             print bal_ori, bal_dest, x, y, centro_test
+# #==============================================================================
+#     ##                if (bal_ori == 22 and bal_dest == 56) or (bal_ori == 56 and bal_dest == 22):
+#     ##                    print bal_ori, bal_dest, intersec_check, x, y,arr_sampled_grid_pattern[bal_ori][bal_dest]
+#                         
+#                     
+#     ##                check_intersection(ruta_test,centro_test,bal_ori,bal_dest,x,
+#     ##                  y) # To graph the sampled path
+#         
+#     
+#     ##idx = 0
+#     ##idx2 = 42
+#     ##
+#     ##ruta_test = [param2.list_coord[idx],param2.list_coord[idx2]]
+#     ##print ruta_test
+#     ##check_all_intersection(ruta_test,idx,idx2)
+#     ##print arr_sampled_grid_pattern[idx][idx2]
+#     ##print check_all_intersection([param2.list_coord[22],param2.list_coord[56]],22,56)
 #==============================================================================
-        for x in range(param.GRID_X_DIV):
-            for y in range(param.GRID_Y_DIV):
-                if param2.samp_pattern[x][y]:# and param2.arr_inlake_square[x][y]:
-                    centro_test = param2.arr_centers_coord[x][y]
-                    intersec_check = \
-                        fs_intersec_finding_func.check_intersection(    
-                            ruta_test,centro_test)
-    ##                if intersec_check == 2 and arr_sampled_grid_pattern[
-    ##                    bal_ori][bal_dest]<1:
-#==============================================================================
-#                     if bal_ori == 7 and bal_dest == 54:
-#                         print '-----------', centro_test, intersec_check
-#==============================================================================
-                    if intersec_check >= 2:    
-#==============================================================================
-#     ##        print grid_x,grid_y
-#                         if bal_ori == 7 and bal_dest == 54:
-#                             print '================', centro_test, intersec_check
-#==============================================================================
-    
-                        arr_sampled_grid_pattern[bal_ori][bal_dest]+=1
-                        
-                        if str(bal_ori)+'_'+str(bal_dest) in dict_sampled_grid:
-                            dict_sampled_grid[str(bal_ori)+'_'+str(bal_dest)].append([x,y])
-                        else:
-                            dict_sampled_grid[str(bal_ori)+'_'+str(bal_dest)] = [[x,y]]
-                            
-#==============================================================================
-#                         if arr_sampled_grid_pattern[bal_ori*param.N_BEACON+x][
-#                                 param.N_BEACON*bal_dest+y]==1:
-#                             print bal_ori, bal_dest, x, y, centro_test
-#==============================================================================
-    ##                if (bal_ori == 22 and bal_dest == 56) or (bal_ori == 56 and bal_dest == 22):
-    ##                    print bal_ori, bal_dest, intersec_check, x, y,arr_sampled_grid_pattern[bal_ori][bal_dest]
-                        
-                    
-    ##                check_intersection(ruta_test,centro_test,bal_ori,bal_dest,x,
-    ##                  y) # To graph the sampled path
-        
-    
-    ##idx = 0
-    ##idx2 = 42
-    ##
-    ##ruta_test = [param2.list_coord[idx],param2.list_coord[idx2]]
-    ##print ruta_test
-    ##check_all_intersection(ruta_test,idx,idx2)
-    ##print arr_sampled_grid_pattern[idx][idx2]
-    ##print check_all_intersection([param2.list_coord[22],param2.list_coord[56]],22,56)
     
     for idx in range(param.N_BEACON):
         for idx2 in range(param.N_BEACON):
@@ -113,7 +117,8 @@ def main(arr_alg_pattern):
             if param2.arr_allowed_routes_pos[idx][idx2]:
     ##            print idx, idx2
                 ruta_test = [param2.list_coord[idx],param2.list_coord[idx2]]
-                check_all_intersection(ruta_test,idx, idx2)
+                arr_sampled_grid_pattern, dict_sampled_grid = fs_ga_func.check_all_intersection(
+                                                                ruta_test,idx, idx2, arr_sampled_grid_pattern)
                 
     ##    if idx != len(list_best_indiv)-1:
     ##        if int(allowed_routes[list_best_indiv[idx]][
@@ -147,7 +152,7 @@ def main(arr_alg_pattern):
     print 'Ending fs_algae routine', time.ctime()
     print '\n'
     
-    print len(arr_sampled_grid_pattern)
+#    print len(arr_sampled_grid_pattern)
     
     return arr_sampled_grid_pattern, dict_sampled_grid
 
