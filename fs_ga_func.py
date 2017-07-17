@@ -265,10 +265,13 @@ def evaluation(individual, fit_func_eval, arr_routes_AB_est_intersec_eval,
 
 #####################Calculo de intersecciones#############################
 
-    tot_intersec_count = 0 # contador de intersecciones en individuos
-    tot_intersec_count = fs_intersec_finding_func.invalid_route_count(
+    tot_inv_route_count = 0 # contador de intersecciones en individuos
+    tot_inv_route_count = fs_intersec_finding_func.invalid_route_count(
             individual, param.arr_allowed_routes, arr_beacons_eval)
    
+    tot_intersec_count = 0
+    tot_intersec_count = fs_intersec_finding_func.intersec_count_f(
+            individual, param.intersec_routes, arr_beacons_eval)
 #==============================================================================
 ##                     1-  Death Penalty + Penalty Factor -- km2
 #==============================================================================
@@ -277,7 +280,7 @@ def evaluation(individual, fit_func_eval, arr_routes_AB_est_intersec_eval,
         if tot_intersec_count > 0:
             answer2 = (-1,)
         else:
-            answer2 = ((1-float(tot_intersec_count)/(len(individual)-1))*(
+            answer2 = ((1-float(tot_inv_route_count)/(len(individual)-1))*(
                           param.FRANJA*fs_cities_dist_func.total_distance(
                                   create_tour(individual))-(param.FRANJA**2)*
                                       tot_intersec_count)*100/param.LAKE_SIZE,)
@@ -288,7 +291,7 @@ def evaluation(individual, fit_func_eval, arr_routes_AB_est_intersec_eval,
 #==============================================================================
 
     elif fit_func_eval == 2:
-        answer2 = ((1-float(tot_intersec_count)/(len(individual)-1))*(
+        answer2 = ((1-float(tot_inv_route_count)/(len(individual)-1))*(
                        param.FRANJA*fs_cities_dist_func.total_distance(
                                create_tour(individual))-(param.FRANJA**2)*
                                    float(tot_intersec_count))*100/param.LAKE_SIZE,)        
@@ -297,7 +300,7 @@ def evaluation(individual, fit_func_eval, arr_routes_AB_est_intersec_eval,
 ##                     3- Exponential Penalty Factor -- coverage %
 #==============================================================================
     elif fit_func_eval == 3:    
-        answer2 = (np.exp(-tot_intersec_count/8)*(
+        answer2 = (np.exp(-tot_inv_route_count/8)*(
                        param.FRANJA*fs_cities_dist_func.total_distance(
                                create_tour(individual))-(param.FRANJA**2)*
                                    tot_intersec_count)*100/param.LAKE_SIZE,)        
@@ -307,7 +310,7 @@ def evaluation(individual, fit_func_eval, arr_routes_AB_est_intersec_eval,
 ##                      4- Penalty Factor -- size km2       
 #==============================================================================
     elif fit_func_eval == 4:
-        answer2 = ((1-float(tot_intersec_count)/(len(individual)-1))*(
+        answer2 = ((1-float(tot_inv_route_count)/(len(individual)-1))*(
                   param.FRANJA*fs_cities_dist_func.total_distance(create_tour(
                           individual))-(param.FRANJA**2)*tot_intersec_count),)        
    
@@ -321,7 +324,7 @@ def evaluation(individual, fit_func_eval, arr_routes_AB_est_intersec_eval,
 #         answer2 =((1-float(tot_intersec_count)/(len(individual)-1))*
 #                   ROI_algae_sampled,)
 #==============================================================================
-        answer2 =((np.exp(-tot_intersec_count/8))*ROI_algae_sampled,)
+        answer2 =((np.exp(-tot_inv_route_count/8))*ROI_algae_sampled,)
         
 #==============================================================================
 #         print individual, answer2
@@ -349,14 +352,14 @@ def evaluation(individual, fit_func_eval, arr_routes_AB_est_intersec_eval,
 #                     8- Penalty Factor -- variation coefficient        
 #==============================================================================  
     elif fit_func_eval == 8:
-        answer2 =((1-float(tot_intersec_count)/(len(
+        answer2 =((1-float(tot_inv_route_count)/(len(
                 individual)-1))*coefficient_variation(individual),)  
         
 #==============================================================================
 #                     9- Penalty Factor -- ROI distribution        
 #==============================================================================  
     elif fit_func_eval == 9:
-        answer2 =((np.exp(-tot_intersec_count/8))*ROI_algae_distributed,) 
+        answer2 =((np.exp(-tot_inv_route_count/8))*ROI_algae_distributed,) 
         
     else:
         print 'FIT_FUNC_TYPE ERROR!'
