@@ -72,7 +72,7 @@ def check_all_intersection(ruta_test,bal_ori,bal_dest, arr_sampled_grid):
 ##                    bal_ori][bal_dest]<1:
                 if intersec_check >= 2:    
 #                    print x,y
-                    arr_sampled_grid[x][y]+=1
+                    arr_sampled_grid[bal_ori][bal_dest]+=1
         
                     
                     if str(bal_ori)+'_'+str(bal_dest) in dict_routes_AB_est_intersec:
