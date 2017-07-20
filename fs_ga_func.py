@@ -15,9 +15,13 @@ import numpy.ma as ma
 import fs_intersec_finding_func
 import fs_cities_dist_func
 
+import eulerian as eu
+
 from deap import base, tools
 
 toolbox=base.Toolbox()
+
+
 
 ### Registro de Funciones de Modulo DEAP######################################
 toolbox.register("select1", tools.selRoulette) 
@@ -61,7 +65,7 @@ def check_all_intersection(ruta_test,bal_ori,bal_dest, arr_sampled_grid):
     
     for x in range(param.GRID_X_DIV):
         for y in range(param.GRID_Y_DIV):
-            if param.samp_pattern[x][y] and param.arr_inlake_square[x][y] and \
+            if param.arr_alg_pattern[x][y] and param.arr_inlake_square[x][y] and \
                 check_squares(ruta_test,x,y):
 #                print x,y
                 centro_test = param.arr_centers_coord[x][y]
@@ -111,42 +115,22 @@ def pop_valid_creation(cand_pop):
     numb_iter = 0 # contador de intentos para hallar poblacion
     numb_solu = 0 # contador de soluciones encontradas
     indiv_len = len(cand_pop)
-    print "Longitud de invididuos = ", indiv_len
+    print "Longitud de individuos = ", indiv_len
     
     total_possi_solu = [] # lista de poblacion inicial valida
 
     while numb_iter < param.ATT_POPU and numb_solu < param.POPU: 
+        path, sortedConnections, cMatrixAttempts, eulerianAttempts  = eu.getEulerianCircuit()  
 
-        possi_solu = [] # lista de posible individuo
-        numb_iter2 = 0  # contador de intentos para hallar siguiente baliza
-        count_solu = 0 # contador de balizas en un individuo
-        possi_solu.append(random.randint(0,indiv_len-1)) # Generacion aleatoria 
-                                                         # primer elemento
-        cand = 0 # baliza candidata
-        
-        while count_solu < indiv_len and numb_iter2 < param.ATT_FACTOR: 
-            cand = random.randint(0,indiv_len-1)
-            if cand not in possi_solu:
-                if int(param.arr_allowed_routes[cand_pop[possi_solu[-1]]][
-                        cand_pop[cand]]) != 1:
-                    possi_solu.append(cand)
-                    count_solu += 1
-#                        print possi_solu
-            numb_iter2 += 1
-#                print count_solu, numb_iter2, numb_solu, numb_iter
-
-        if len(possi_solu) >= indiv_len:
-            numb_solu += 1
-            total_possi_solu.append(possi_solu)
-#                print possi_solu
-    
+        total_possi_solu.append(path)
+        numb_solu += 1
         numb_iter += 1
     
     print "Intentos  aleatorios de creacion de poblacion =", numb_iter
     print "Tamano de Poblacion =", len(total_possi_solu)
     print "\n"
     return total_possi_solu
-    
+
 def initIndividual(icls, content):
     "Inicializacion de clase de Individuo (Externo a DEAP)"
     return icls(content)
@@ -229,7 +213,7 @@ def evaluation(individual, fit_func_eval, arr_routes_AB_est_intersec_eval,
     
 ###########################Region de Interes###################################    
     if fit_func_eval == 5 or fit_func_eval == 6:
-    
+
         ROI_algae_sampled = ROI_calculation(individual,arr_routes_AB_est_intersec_eval,
                                             arr_beacons_eval)
         
@@ -259,19 +243,23 @@ def evaluation(individual, fit_func_eval, arr_routes_AB_est_intersec_eval,
 #####################Calculo de intersecciones#############################
 
     tot_intersec_count = 0 # contador de intersecciones en individuos
-    tot_intersec_count = fs_intersec_finding_func.invalid_route_count(
+    tot_intersec_count = fs_intersec_finding_func.intersec_count_f(
+            individual, param.intersec_routes, arr_beacons_eval)
+    
+    tot_inv_route_count = 0
+    tot_inv_route_count = fs_intersec_finding_func.invalid_route_count(
             individual, param.arr_allowed_routes, arr_beacons_eval)
+    tot_inv_route_count += fs_intersec_finding_func.repeated_route_count(individual)
    
 #==============================================================================
-##                     1-  Death Penalty + Penalty Factor -- km2
+##                     1-  Death Penalty  -- km2
 #==============================================================================
 
     if fit_func_eval == 1:        
-        if tot_intersec_count > 0:
+        if tot_inv_route_count > 0:
             answer2 = (-1,)
         else:
-            answer2 = ((1-float(tot_intersec_count)/(len(individual)-1))*(
-                          param.FRANJA*fs_cities_dist_func.total_distance(
+            answer2 = ((param.FRANJA*fs_cities_dist_func.total_distance(
                                   create_tour(individual))-(param.FRANJA**2)*
                                       tot_intersec_count)*100/param.LAKE_SIZE,)
 
@@ -281,10 +269,10 @@ def evaluation(individual, fit_func_eval, arr_routes_AB_est_intersec_eval,
 #==============================================================================
 
     elif fit_func_eval == 2:
-        answer2 = ((1-float(tot_intersec_count)/(len(individual)-1))*(
+        answer2 = ((1-float(tot_inv_route_count)/(len(individual)-1))*(
                        param.FRANJA*fs_cities_dist_func.total_distance(
                                create_tour(individual))-(param.FRANJA**2)*
-                                   float(tot_intersec_count))*100/param.LAKE_SIZE,)        
+                                   float(tot_intersec_count))*100/param.LAKE_SIZE,)             
 
 #==============================================================================
 ##                     3- Exponential Penalty Factor -- coverage %
