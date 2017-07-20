@@ -229,3 +229,18 @@ def invalid_route_count(indiv, allowed_routes, arr_subgroup):
 #     print check_intersection([[1620,10260],[10260, 5400]],[7100, 7100])
 #==============================================================================
     
+    def repeated_route_count(indiv):
+        numRepeated = 0
+        usedConnections = []
+        for ind, beacon in enumerate(indiv):
+            if ind < len(indiv)-1:
+                connection = tuple([indiv[ind],indiv[ind+1]])
+            else:
+                connection = tuple([indiv[ind],indiv[0]])
+            connection = tuple([min(connection),max(connection)])
+        
+            if connection not in usedConnections:
+                usedConnections.append(connection)
+            else:
+                numRepeated += 1       
+        return numRepeated
