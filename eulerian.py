@@ -31,7 +31,7 @@ def removeInvalidRoutes(connectionMatrix):
     left in the same row, until we find a non-invalid route we can use and we set to 1 """
     while np.count_nonzero(mult) != 0:
         for x in range(numBeacons):
-            for y in range(numBeacons): #3 = numBeacons
+            for y in range(numBeacons): 
                 if mult[x][y] == 1:
                     connectionMatrix[x][y] = 0
                     
@@ -53,7 +53,7 @@ def removeInvalidRoutes(connectionMatrix):
 
     return connectionMatrix
 
-#%% Check whether the matrix contains invalid routes HAU ZEEEEEE
+#%% Check whether the matrix contains invalid routes
 def containsInvalidRoute(connectionMatrix):
     mult = np.multiply(param.arr_allowed_routes, connectionMatrix)
     
@@ -196,7 +196,7 @@ def getEulerianCircuit():
         
         # GET A MATRIX WITHOUT SELF-CONNECTIONS OR DUPLICATED ROUTES
         connectionMatrix = getConnectionMatrix()
-        #connectionMatrix = removeInvalidRoutes(connectionMatrix) # --> Solution1
+        connectionMatrix = removeInvalidRoutes(connectionMatrix) # --> Solution1
         
         # GET A MATRIX WITHOUT INVALID ROUTES
         connectionList = getConnectionList(connectionMatrix)
@@ -211,7 +211,7 @@ def getEulerianCircuit():
             else:
                 cMatrixAttempts += 1
                 connectionMatrix = getConnectionMatrix()
-                #connectionMatrix = removeInvalidRoutes(connectionMatrix) # --> Solution1
+                connectionMatrix = removeInvalidRoutes(connectionMatrix) # --> Solution1
                 connectionList = getConnectionList(connectionMatrix)
         
         # GET AN EULERIAN CIRCUIT, i.e., all nodes are connected together with an odd number of connections each
@@ -223,15 +223,11 @@ def getEulerianCircuit():
             path = list(zip(*sortedConnections)[0])           
             break
         elif eulerianAttempts == maxAttempts:
-#            print "eulerianAttempts la lia"
             break
 
         eulerianAttempts += 1
         
     return path, sortedConnections, cMatrixAttempts, eulerianAttempts
-
-#for i in range(10000):
-#    getEulerianCircuit()
 
 #%% MAIN PROGRAM
 def main():
@@ -249,18 +245,3 @@ if __name__ == "__main__":
     
     main()
 
-
-"""
-++ Gehitu barra dire lurra duten ibilbidik? Do egina ya?
-
-(1): Nahi izatekotan ibilbide errepikatuk ere gorde
-
-- Ikusi grafikun tamaina nola aldatu, baliza aunitz daudenin eztela deus ikusten...
-
-- Sortzen ahal da zerbait barkua depende non dagon handik hasteko ibilbidia, o sea, 
-2. balizan baldin badago ta ibilbidia [1,2,3] bada aldatzeko [2,3,1]-era.
-
-- Connection matrix ezta hasieran uste genun bezalakua
-
-- Normalin hasiera puntua da bajua, tuplak (min,max) ordenatuk daudelako
-"""
