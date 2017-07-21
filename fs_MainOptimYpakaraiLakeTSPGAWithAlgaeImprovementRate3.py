@@ -41,7 +41,7 @@ from deap import base, creator, tools
 
 import parameters_opt_ga as param
 import fs_intersec_finding_func
-import fs_cities_dist_func
+#import fs_cities_dist_func
 import fs_ga_func
 
 def print_parameters():
@@ -62,7 +62,6 @@ def print_parameters():
     print 'Franja de Sensor (FRANJA) = ', param.FRANJA
     print 'Factor de Intentos para individuo (ATT_FACTOR)= ', param.ATT_FACTOR
     print 'Factor de Intentos para poblacion (ATT_POPU) = ', param.ATT_POPU
-    print param.FIT_FUNC_TYPE
     
     print('\n')
     
@@ -123,8 +122,8 @@ def main(fit_func_type, arr_subgroup,arr_routes_AB_est_intersec,
 
         
         pop_valid = fs_ga_func.pop_valid_creation(arr_subgroup)
-        np.savetxt('Results/initial_pop_test.csv', pop_valid, fmt = '%i', 
-                   delimiter=",")
+    #    np.savetxt('Results/initial_pop_test.csv', pop_valid, fmt = '%i', 
+    #               delimiter=",")
         
         
     
@@ -232,14 +231,34 @@ def main(fit_func_type, arr_subgroup,arr_routes_AB_est_intersec,
             best_evaluation = evaluation2
             best_of_best = best_ind_final
             best_of_best_order = best_individual
-#==============================================================================
-#             best_lst_max = lst_max
-#             best_lst_ave = lst_ave
-#             best_lst_imp_rate = lst_imp_rate
-#==============================================================================
+#            best_lst_max = lst_max
+#            best_lst_ave = lst_ave
+#            best_lst_imp_rate = lst_imp_rate
             best_sim = sim
-            best_last_pop = last_pop_ga
+#            best_last_pop = last_pop_ga
         print('\n')
+        
+        arr_lst_max = np.array(lst_max)
+        arr_lst_ave = np.array(lst_ave)
+    
+        if os.path.isfile('Results/lst_max_exp_test'):
+            with open('Results/lst_max_exp_test','a') as f_handle:
+                np.savetxt(f_handle, arr_lst_max[None,:],fmt = '%.3f', 
+                           delimiter = ',')
+        
+        else:
+            np.savetxt('Results/lst_max_exp_test', arr_lst_max[None,:],fmt = '%.3f', 
+                       delimiter = ',')
+            
+        
+        if os.path.isfile('Results/lst_ave_exp_test'):
+            with open('Results/lst_ave_exp_test','a') as f_handle:
+                np.savetxt(f_handle, arr_lst_ave[None,:] ,fmt = '%.3f', 
+                           delimiter = ',')
+    
+        else:
+            np.savetxt('Results/lst_ave_exp_test', arr_lst_ave[None,:] ,fmt = '%.3f', 
+                       delimiter = ',')
         
     
     ### 13- Imprime los resultados de la mejor simulación.
@@ -254,7 +273,14 @@ def main(fit_func_type, arr_subgroup,arr_routes_AB_est_intersec,
     
     #np.savetxt(param.OUTPUT1, best_of_best, fmt = '%i', delimiter=",")
     
-    np.savetxt(param.OUTPUT5, best_last_pop, fmt = '%i', delimiter=",")
+    #np.savetxt(param.OUTPUT5, best_last_pop, fmt = '%i', delimiter=",")
+    
+#######Almacenamiento de la tasa de mejoras de la simulacion en archivo
+####### externo
+#########################################################################
+
+
+    
     
     arr_tot_best_ind = np.array(tot_best_ind) 
     
@@ -293,34 +319,30 @@ def main(fit_func_type, arr_subgroup,arr_routes_AB_est_intersec,
     
     print 'Best Simulation = ', best_sim
     
-    #==============================================================================
-    # ###Registro de resultados de lista de promedios y mejores valores
-    # ###de fitness en archivos externos.
-    # ###Lo uso cuando corro multiples simulaciones en servidor y lo
-    # ###grafico en mi maquina.
-    # #########################################################################
-    #
+    ###Registro de resultados de lista de promedios y mejores valores
+    ###de fitness en archivos externos.
+    ###Lo uso cuando corro multiples simulaciones en servidor y lo
+    ###grafico en mi maquina.
+    #########################################################################
     # file = open("lst_max_ga_restrict41.txt","w")
     # file.write(time.ctime())
     # file.write('\n')
     # file.write(os.path.basename(__file__))
     # file.write('\n')
     # for element in best_lst_max:
-    #     file.write(str(element)+',')
+    #    file.write(str(element)+',')
     # file.close()
-    #
-    # file = open("lst_ave_ga_restrict41.txt","w")
-    # file.write(time.ctime())
-    # file.write('\n')
-    # file.write(os.path.basename(__file__))
-    # file.write('\n')
-    # for element in best_lst_ave:
-    #     file.write(str(element)+',')
-    # file.close()
-    #==============================================================================
+    #  file = open("lst_ave_ga_restrict41.txt","w")
+    #file.write(time.ctime())
+    #file.write('\n')
+    #file.write(os.path.basename(__file__))
+    #file.write('\n')
+    #for element in best_lst_ave:
+    #    file.write(str(element)+',')
+    #file.close()
     
-    print 'Distance = ', round(fs_cities_dist_func.total_distance(
-            fs_ga_func.create_tour(best_of_best)))
+#        print 'Distance = ', round(fs_cities_dist_func.total_distance(
+#                fs_ga_func.create_tour(best_of_best)))
 
     
 #    print best_of_best_order, arr_subgroup
@@ -393,7 +415,7 @@ def main(fit_func_type, arr_subgroup,arr_routes_AB_est_intersec,
     
 
 if __name__ == '__main__':
-    init_fit_func_type = 3
+    init_fit_func_type = 2
     init_all_beacons = np.arange(60,dtype='uint8')
     init_arr_routes_AB_est_interc = np.zeros((param.N_BEACON,param.N_BEACON),
                             dtype = 'uint16')
