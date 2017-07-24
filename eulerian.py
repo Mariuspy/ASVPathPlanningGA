@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Editor de Spyder
-
-Este es un archivo temporal
+@author: Iratxe
 """
 # Imports
 from collections import Counter
@@ -10,6 +8,7 @@ import itertools
 import numpy as np
 import random
 import parameters_opt_ga as param
+import fs_intersec_finding_func as intersec
 numBeacons = param.N_BEACON
 invalidRoutes = param.arr_allowed_routes
 
@@ -31,7 +30,7 @@ def removeInvalidRoutes(connectionMatrix):
     left in the same row, until we find a non-invalid route we can use and we set to 1 """
     while np.count_nonzero(mult) != 0:
         for x in range(numBeacons):
-            for y in range(numBeacons): 
+            for y in range(numBeacons): #3 = numBeacons
                 if mult[x][y] == 1:
                     connectionMatrix[x][y] = 0
                     
@@ -53,7 +52,7 @@ def removeInvalidRoutes(connectionMatrix):
 
     return connectionMatrix
 
-#%% Check whether the matrix contains invalid routes
+#%% Check whether the matrix contains invalid routes HAU ZEEEEEE
 def containsInvalidRoute(connectionMatrix):
     mult = np.multiply(param.arr_allowed_routes, connectionMatrix)
     
@@ -125,20 +124,22 @@ def toEulerian(connectionList):
             connectionList.remove(tup)
         # If not, we modify the tuple by changing the current "odd" beacon with another "odd" beacon
         else:
-            if tup[0] in oddBeacons:
+            if tup[0] in oddBeacons:           
                 modifiedTup = (oddBeacons[random.randint(0, len(oddBeacons)-1)], tup[1])
             else:
                 modifiedTup = (tup[0], oddBeacons[random.randint(0, len(oddBeacons)-1)])
             modifiedTup = (min(modifiedTup), max(modifiedTup))
 
-            """ We can have the case where it is impossible not to repeat a tuple 
-            or to have a self-connected one (according to our modification system). 
-            After some iterations we will just discard the duplicated or self-connected tuple 
-            that will change the size of the connectionList so it will be discarded
-            later in the code (2)"""
+            """ We can have the case where it is impossible not to repeat a tuple, 
+            to have a self-connected one (according to our modification system) or
+            to have an invalid one (according to invalidRoutes). 
+            After some iterations we will just discard that tuple that will change
+            the size of the connectionList so it will be discarded later in the code (2)"""
             isDuplicated = modifiedTup in connectionList
-            isSelfConnected = modifiedTup[0] == modifiedTup[1]
-            if isDuplicated or isSelfConnected:
+            isSelfConnected = modifiedTup[0] == modifiedTup[1]              ##ERREPIKATUA!!!
+            isInvalid = invalidRoutes[modifiedTup[0]][modifiedTup[1]] == 1
+            
+            if isDuplicated or isSelfConnected or isInvalid:
                 duplicated +=1
                 if duplicated == maxDuplicated: 
                     connectionList.remove(tup)
@@ -202,7 +203,7 @@ def getEulerianCircuit():
         connectionList = getConnectionList(connectionMatrix)
         
         while True: # Try different matrices until we get a valid one
-            notSelfConnected = all(x == 0 for x in connectionMatrix.diagonal())
+            notSelfConnected = all(x == 0 for x in connectionMatrix.diagonal()) ###ERREPIKATUA!!
             notDuplicated = len(list(set(connectionList))) == numBeacons
             if notSelfConnected and notDuplicated: # This is a valid matrix
                 break
@@ -229,6 +230,7 @@ def getEulerianCircuit():
         
     return path, sortedConnections, cMatrixAttempts, eulerianAttempts
 
+
 #%% MAIN PROGRAM
 def main():
     
@@ -239,9 +241,18 @@ def main():
     print "Attempts to get a valid and Eulerian connection matrix: ", eulerianAttempts
     #print "Sorted connections: \n", sortedConnections
     print "Valid Eulerian circuit: \n", path
-        
+    print "Number of invalid routes: ", intersec.invalid_route_count(path,invalidRoutes,range(60))   
     
 if __name__ == "__main__":
     
     main()
 
+
+"""
+(1): Nahi izatekotan ibilbide errepikatuk ere gorde
+
+- Sortzen ahal da zerbait barkua depende non dagon handik hasteko ibilbidia, o sea, 
+2. balizan baldin badago ta ibilbidia [1,2,3] bada aldatzeko [2,3,1]-era.
+
+- Normalin hasiera puntua da bajua, tuplak (min,max) ordenatuk daudelako
+"""
