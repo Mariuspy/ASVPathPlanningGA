@@ -16,6 +16,8 @@ import fs_intersec_finding_func
 import fs_cities_dist_func
 
 from deap import base, tools
+from scoop import futures
+
 
 toolbox=base.Toolbox()
 
@@ -24,6 +26,7 @@ toolbox.register("select1", tools.selRoulette)
 toolbox.register("select2", tools.selBest)
 toolbox.register("mate", tools.cxOrdered)
 toolbox.register("mutate", tools.mutShuffleIndexes, indpb=0.05)
+toolbox.register("map", futures.map)
 
 def check_squares(ruta_test,x,y):
     "Verifica si los cuadros x,y estan en el rango de accion de ruta_test"
@@ -273,15 +276,14 @@ def evaluation(individual, fit_func_eval, arr_routes_AB_est_intersec_eval,
     tot_intersec_count = fs_intersec_finding_func.intersec_count_f(
             individual, param.intersec_routes, arr_beacons_eval)
 #==============================================================================
-##                     1-  Death Penalty + Penalty Factor -- km2
+##                     1-  Death Penalty -- km2
 #==============================================================================
 
     if fit_func_eval == 1:        
-        if tot_intersec_count > 0:
+        if tot_inv_route_count > 0:
             answer2 = (-1,)
         else:
-            answer2 = ((1-float(tot_inv_route_count)/(len(individual)-1))*(
-                          param.FRANJA*fs_cities_dist_func.total_distance(
+            answer2 = ((param.FRANJA*fs_cities_dist_func.total_distance(
                                   create_tour(individual))-(param.FRANJA**2)*
                                       tot_intersec_count)*100/param.LAKE_SIZE,)
 
@@ -387,7 +389,7 @@ def genetic_algorithm(pop):
 ##        Inicio de GA
     
     # Evaluacion de toda la poblacion
-    fitnesses = list(map(toolbox.evaluate, pop))
+    fitnesses = list(toolbox.map(toolbox.evaluate, pop))
 #        print pop
     for ind, fit in zip(pop, fitnesses):
 #            print fit
@@ -425,7 +427,7 @@ def genetic_algorithm(pop):
 
         # Se evaluan individuos con fitness invalidos, y se calcula los valores de ellos
         invalid_ind = [ind for ind in offspring if not ind.fitness.valid]
-        fitnesses = map(toolbox.evaluate, invalid_ind)
+        fitnesses = toolbox.map(toolbox.evaluate, invalid_ind)
         for ind, fit in zip(invalid_ind, fitnesses):
             ind.fitness.values = fit
         
