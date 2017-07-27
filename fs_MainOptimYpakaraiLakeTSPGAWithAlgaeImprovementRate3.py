@@ -44,6 +44,9 @@ import fs_intersec_finding_func
 #import fs_cities_dist_func
 import fs_ga_func
 
+creator.create("FitnessMin", base.Fitness, weights=(1.0,))
+creator.create("Individual", list, fitness=creator.FitnessMin)
+
 def print_parameters():
 
     #==========================================================================
@@ -90,9 +93,7 @@ def main(fit_func_type, arr_subgroup,arr_routes_AB_est_intersec,
                                                       # script
     
     random.seed(time.time()) # genera semilla aleatoria
-    
-
-    
+        
     fs_ga_func.assign_eval_parameters(fit_func_type, arr_routes_AB_est_intersec, 
                                       arr_subgroup,dict_routes_AB_est_intersec)
     
@@ -142,20 +143,21 @@ def main(fit_func_type, arr_subgroup,arr_routes_AB_est_intersec,
 
         
         toolbox = base.Toolbox()
-    
+
     #==========================================================================
     #     ### Inicializacion de las funciones del GA del modulo DEAP
     #==========================================================================
     ################Individual Representation And Evaluation###################
     
-        creator.create("FitnessMin", base.Fitness, weights=(1.0,))
-        creator.create("Individual", list, fitness=creator.FitnessMin)
+
     
         toolbox.register("indices", np.random.permutation, len(arr_subgroup))
         toolbox.register(
                          "individual", tools.initIterate, creator.Individual, 
                              toolbox.indices)
         toolbox.register("population", tools.initRepeat, list, toolbox.individual)
+        
+
     
     
     
@@ -241,23 +243,23 @@ def main(fit_func_type, arr_subgroup,arr_routes_AB_est_intersec,
         arr_lst_max = np.array(lst_max)
         arr_lst_ave = np.array(lst_ave)
     
-        if os.path.isfile('Results/lst_max_exp_test'):
-            with open('Results/lst_max_exp_test','a') as f_handle:
+        if os.path.isfile('Results/lst_max_exp_'+ str(param.EXPERIMENT)):
+            with open('Results/lst_max_exp_'+ str(param.EXPERIMENT),'a') as f_handle:
                 np.savetxt(f_handle, arr_lst_max[None,:],fmt = '%.3f', 
                            delimiter = ',')
         
         else:
-            np.savetxt('Results/lst_max_exp_test', arr_lst_max[None,:],fmt = '%.3f', 
+            np.savetxt('Results/lst_max_exp_'+str(param.EXPERIMENT), arr_lst_max[None,:],fmt = '%.3f', 
                        delimiter = ',')
             
         
-        if os.path.isfile('Results/lst_ave_exp_test'):
-            with open('Results/lst_ave_exp_test','a') as f_handle:
+        if os.path.isfile('Results/lst_ave_exp_'+str(param.EXPERIMENT)):
+            with open('Results/lst_ave_exp_'+ str(param.EXPERIMENT),'a') as f_handle:
                 np.savetxt(f_handle, arr_lst_ave[None,:] ,fmt = '%.3f', 
                            delimiter = ',')
     
         else:
-            np.savetxt('Results/lst_ave_exp_test', arr_lst_ave[None,:] ,fmt = '%.3f', 
+            np.savetxt('Results/lst_ave_exp_' + str(param.EXPERIMENT), arr_lst_ave[None,:] ,fmt = '%.3f', 
                        delimiter = ',')
         
     
@@ -415,7 +417,7 @@ def main(fit_func_type, arr_subgroup,arr_routes_AB_est_intersec,
     
 
 if __name__ == '__main__':
-    init_fit_func_type = 2
+    init_fit_func_type = 1
     init_all_beacons = np.arange(60,dtype='uint8')
     init_arr_routes_AB_est_interc = np.zeros((param.N_BEACON,param.N_BEACON),
                             dtype = 'uint16')
