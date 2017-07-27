@@ -36,11 +36,11 @@ OUTPUT5 = 'Results/best_last_pop_test.csv'
 
 N_BEACON = 60 
 N_SIM = 1
-CXPB = 0.8
+CXPB = 0.6
 MUTPB =  0.2
 NGEN = 100
 POPU = 100
-ELIT_RATE = 0.2 
+ELIT_RATE = 0.2
 FRANJA = 20
 ATT_FACTOR = 1000 # Intentos para encontrar siguiente baliza en poblacion inicial valida
 ATT_POPU = 10000 # Intentos para encontrar una poblacion inicial validad  de POPU individuos
@@ -67,6 +67,8 @@ STRATEGY_PHASE = 1 #NO CAMBIAR HASTA ENCONTRAR FUNCION PARA SELECCION DE
 7 -  Death Penalty -- ROI variation
 8 - Penalty Factor -- ROI variation   
 '''
+
+EXPERIMENT = 'test'
 
 #==============================================================================
 # # CONSTANTES
