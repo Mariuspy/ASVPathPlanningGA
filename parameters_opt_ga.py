@@ -35,6 +35,7 @@ OUTPUT4 = 'Results/Best_Solution_ngen100_sim1.csv'
 OUTPUT5 = 'Results/best_last_pop_test.csv'
 
 N_BEACON = 60 
+N_USED_BEACON = 60
 N_SIM = 1
 CXPB = 0.8
 MUTPB =  0.2
