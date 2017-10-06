@@ -17,8 +17,8 @@ import time
 
 import csv
 
-EXPERIMENT = 21
-MAX_TIME_FRAMES = 3
+EXPERIMENT = 'TEST'
+MAX_TIME_FRAMES = 1
 GROUP_EST_SIZE = 5 # AB Squares separated by more than 5 squares form a 
                    # different AB group
 
@@ -352,22 +352,35 @@ def main():
                                                     # beacons and Estimated 
                                                     # (sampled) AB intersections
                                                     # matrix
-            if strategy_phase == HYB_PH:
-                print 'HYBRID PHASE'
-                print '\n'
-                
-                best_indiv = OptimGA.main(fitness_function, arr_beacons, 
-                                          arr_routes_AB_est_intersec, 
-                                          dict_routes_AB_est_intersec)#REPLACE BY MOGA LATER!!
-            
-            else:
-                print 'INTENSIFICATION PHASE'
-                print '\n'
-                
-                best_indiv = OptimGA.main(fitness_function, arr_beacons, 
-                                          arr_routes_AB_est_intersec, 
-                                          dict_routes_AB_est_intersec)
-                 
+                                                   
+            print 'INTENSIFICATION PHASE'
+            print '\n'
+             
+            best_indiv = OptimGA.main(fitness_function, arr_beacons, 
+                                       arr_routes_AB_est_intersec, 
+                                       dict_routes_AB_est_intersec)
+                  
+
+# =================TO BE USED WITH MULTIOBJECTIVE ==============================
+#
+#                                                    
+#             if strategy_phase == HYB_PH:
+#                 print 'HYBRID PHASE'
+#                 print '\n'
+#                 
+#                 best_indiv = OptimGA.main(fitness_function, arr_beacons, 
+#                                           arr_routes_AB_est_intersec, 
+#                                           dict_routes_AB_est_intersec)#REPLACE BY MOGA LATER!!
+#             
+#             else:
+#                 print 'INTENSIFICATION PHASE'
+#                 print '\n'
+#                 
+#                 best_indiv = OptimGA.main(fitness_function, arr_beacons, 
+#                                           arr_routes_AB_est_intersec, 
+#                                           dict_routes_AB_est_intersec)
+#                  
+# =============================================================================
                 
                 
         print 'strategy', strategy_phase            
