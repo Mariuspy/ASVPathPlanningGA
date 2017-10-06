@@ -35,6 +35,7 @@ OUTPUT4 = 'Results/Best_Solution_ngen100_sim1.csv'
 OUTPUT5 = 'Results/best_last_pop_test.csv'
 
 N_BEACON = 60 
+N_USED_BEACON = 60
 N_SIM = 1
 CXPB = 0.8
 MUTPB =  0.2
@@ -216,5 +217,7 @@ arr_centers_coord = GRID_SIZE*arr_centers+GRID_SIZE/2
 
 arr_inlake_center = np.loadtxt(INPUT9,dtype ='uint8', delimiter =',')
 
-samp_pattern =  np.zeros((GRID_X_DIV,GRID_Y_DIV),dtype = 'uint8') 
+
+samp_pattern =  np.zeros((GRID_X_DIV,GRID_Y_DIV),dtype = 'uint8')
+
 
