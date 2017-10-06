@@ -382,8 +382,10 @@ def genetic_algorithm(pop):
                        # generaciones
     prev_best_fitness = 0
     improv_rate = 0
-    valid_solu_flag_in = 0
-    valid_solu_flag_out = 0
+# =============================================================================
+#     valid_solu_flag_in = 0
+#     valid_solu_flag_out = 0
+# =============================================================================
     valid_gen = -1
 
 ##        Inicio de GA
@@ -400,7 +402,9 @@ def genetic_algorithm(pop):
 #==============================================================================
     for g in range(param.NGEN):
 #        print 'Generation=', g #, time.ctime()
-        gen_best=[]
+# =============================================================================
+#         gen_best=[]
+# =============================================================================
         
         # Seleccion de inviduos para la proxima generacion
         offspring = toolbox.select1(pop, int(param.POPU*(
@@ -454,26 +458,28 @@ def genetic_algorithm(pop):
 #            print g, max(fits),improv_rate    
         list_imp_rate.append(improv_rate)
         prev_best_fitness = max(fits)
-        gen_best = tools.selBest(pop,1)[0]
+#        gen_best = tools.selBest(pop,1)[0]
         
 #        print 'Gen_best=', gen_best, max(fits)
 
                  
- ## Se verifica si el mejor individuo de la generacion es valido
-        if valid_solu_flag_out == 0 and g > 0:
-             for idx, indiv in enumerate(gen_best): # verificacion en matriz de rutas validas
-                 if idx != (len(gen_best)-1):
-                     if int(param.arr_allowed_routes[param.arr_subgroup[
-                             gen_best[idx]]][param.arr_subgroup[
-                                     gen_best[idx+1]]]) == 1:
-                         valid_solu_flag_in = 0
-                         break
-                     else:
-                        valid_solu_flag_in = 1
-             if valid_solu_flag_in == 1:
-                 valid_solu_flag_out = 1
-                 valid_gen = g 
-#                 print "valid gen", valid_gen
+# =============================================================================
+#  ## Se verifica si el mejor individuo de la generacion es valido
+#         if valid_solu_flag_out == 0 and g > 0:
+#              for idx, indiv in enumerate(gen_best): # verificacion en matriz de rutas validas
+#                  if idx != (len(gen_best)-1):
+#                      if int(param.arr_allowed_routes[param.arr_subgroup[
+#                              gen_best[idx]]][param.arr_subgroup[
+#                                      gen_best[idx+1]]]) == 1:
+#                          valid_solu_flag_in = 0
+#                          break
+#                      else:
+#                         valid_solu_flag_in = 1
+#              if valid_solu_flag_in == 1:
+#                  valid_solu_flag_out = 1
+#                  valid_gen = g 
+# #                 print "valid gen", valid_gen
+# =============================================================================
                  
 
                       
