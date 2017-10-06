@@ -36,7 +36,7 @@ OUTPUT5 = 'Results/best_last_pop_test.csv'
 
 N_BEACON = 60 
 N_SIM = 1
-CXPB = 0.6
+CXPB = 0.8
 MUTPB =  0.2
 NGEN = 100
 POPU = 100
@@ -53,9 +53,11 @@ GRID_SIZE = 200 # metros
 GRID_X_DIV = LAKE_SIZE_X/GRID_SIZE # numero de cuadros sobre el eje x
 GRID_Y_DIV = LAKE_SIZE_Y/GRID_SIZE # numero de cuadros sobre el eje y
 
-FIT_FUNC_TYPE = 2
-STRATEGY_PHASE = 1 #NO CAMBIAR HASTA ENCONTRAR FUNCION PARA SELECCION DE 
-                   # SUB_GRUPO DE BALIZAS PARA FASE DE INTENSFICACION
+# =============================================================================
+# FIT_FUNC_TYPE = 2
+# STRATEGY_PHASE = 1 #NO CAMBIAR HASTA ENCONTRAR FUNCION PARA SELECCION DE 
+#                    # SUB_GRUPO DE BALIZAS PARA FASE DE INTENSFICACION
+# =============================================================================
 
 '''
 1 - Death Penalty + Penalty Factor -- km2
@@ -80,19 +82,21 @@ EXPERIMENT = 'test'
 
 ###############################################################################
 
-if STRATEGY_PHASE == 1:
-        arr_subgroup = np.arange(60,dtype='uint8') 
-
-else:
-    #PENDIENTE MECANISMO DE SELECCION DE SUBGRUPO DE BALIZAS!!!!!
-    
-    arr_reg1= np.loadtxt('reg1_ev_track.csv' ,dtype = 'uint8', delimiter =',')
-    arr_reg2= np.loadtxt('reg2_ev_track.csv' ,dtype = 'uint8', delimiter =',')
-    
-    
-    arr_subgroup = np.concatenate((arr_reg1,arr_reg2))
-
-
+# =============================================================================
+# if STRATEGY_PHASE == 1:
+#         arr_subgroup = np.arange(60,dtype='uint8') 
+# 
+# else:
+#     #PENDIENTE MECANISMO DE SELECCION DE SUBGRUPO DE BALIZAS!!!!!
+#     
+#     arr_reg1= np.loadtxt('reg1_ev_track.csv' ,dtype = 'uint8', delimiter =',')
+#     arr_reg2= np.loadtxt('reg2_ev_track.csv' ,dtype = 'uint8', delimiter =',')
+#     
+#     
+#     arr_subgroup = np.concatenate((arr_reg1,arr_reg2))
+# 
+# 
+# =============================================================================
 ###############################################################################
 
 
@@ -185,7 +189,7 @@ for n in coord_orig:
     
 list_coord_subgroup =[]
     
-for element in arr_subgroup:
+for element in np.arange(60,dtype='uint8'):
         list_coord_subgroup.append(list_coord2[element])
 
     

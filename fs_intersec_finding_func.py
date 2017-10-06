@@ -193,7 +193,7 @@ def intersec_count_f(indiv, intersec_routes, arr_subgroup):
     last_route = 0   # ultima ruta en short_indiv
     intersec_count = 0 # contador de intersecciones de rutas en individuo
 
-    
+
     for idx, element in enumerate(indiv):   # Creacion de nueva lista
         short_indiv = arr_subgroup[indiv[:idx+1]]         # Agrega gradualmente los elementos del individuo y
                                             # chequea la cantidad de interseccioens hasta ese punto
@@ -201,14 +201,14 @@ def intersec_count_f(indiv, intersec_routes, arr_subgroup):
         if len(short_indiv)>2: # Solo evalua si la lista tiene mas de 2 elementos
             last_route = param.N_BEACON*short_indiv[-2] + short_indiv[-1] 
             test_route = 0 # Ruta para verificar interseccion
-            
+
             for idx2, element3 in enumerate(short_indiv): # Seleccion de baliza
                 if idx2 < len(short_indiv)-2: # Todas las rutas excepto la ultima
                     test_route = param.N_BEACON*short_indiv[idx2] + short_indiv[
                             idx2+1]
                     intersec_count += int(intersec_routes[
                             last_route][test_route])
-            
+
     return intersec_count
 
 def invalid_route_count(indiv, allowed_routes, arr_subgroup):
@@ -221,11 +221,11 @@ def invalid_route_count(indiv, allowed_routes, arr_subgroup):
             if int(allowed_routes[arr_subgroup[indiv[idx]]][arr_subgroup[indiv[
                     idx+1]]]) == 1:
                 n_ruta_inval += 1
-                
+
     return n_ruta_inval
 
 #==============================================================================
 # if __name__ == '__main__':
 #     print check_intersection([[1620,10260],[10260, 5400]],[7100, 7100])
 #==============================================================================
-    
+
